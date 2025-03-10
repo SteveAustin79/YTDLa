@@ -14,11 +14,11 @@ cd YTDLa
 ```
 3. Install python environment
 ```diff
-python3 -m venv venv
+python -m venv venv
 ```
 4. Install dependencies
 ```diff
-venv/bin/python3 -m pip install pytubefix ffmpeg-python
+venv/bin/python -m pip install pytubefix ffmpeg-python
 ```
 5. Create and modify config.json
 ```diff
@@ -31,7 +31,7 @@ nano channels.txt
 ```
 7. Run the application
 ```diff
-venv/bin/python3 YTDLa.py
+venv/bin/python YTDLa.py
 ```
 
 ## Update
