@@ -176,12 +176,16 @@ def print_video_infos(yt, res, video_views):
     print(print_colored_text("Date:          ", BCOLORS.BLACK), yt.publish_date.strftime("%Y-%m-%d"))
 
     length_title = print_colored_text("Length:         ", BCOLORS.BLACK)
-    match = re.search(r"'fps':\s*(\d+)", str(yt.vid_info))
+
     frames_per_second = ""
-    if match:
-        fps_value = int(match.group(1))
-        if extract_number(res) > extract_number("1080p"):
-            frames_per_second = print_colored_text("   (" + str(yt.length*fps_value) + " Frames)", BCOLORS.BLACK)
+
+    if not audio_or_video:
+        match = re.search(r"'fps':\s*(\d+)", str(yt.vid_info))
+        if match:
+            fps_value = int(match.group(1))
+            if extract_number(res) > extract_number("1080p"):
+                frames_per_second = print_colored_text("   (" + str(yt.length * fps_value) + " Frames)", BCOLORS.BLACK)
+
     length_title_value = length_title + str(int(yt.length / 60)) + "m" + frames_per_second
     if ignore_max_duration_bool and ignore_min_duration_bool:
         print(length_title_value)
@@ -469,7 +473,7 @@ def convert_m4a_to_mp3(video_id, publish_date, video_resolution, year, restricte
         restricted_path = "/restricted/"
 
     output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
-                   + " - " + clean_string_regex(os.path.splitext(audio_file)[0]) + " - " + video_id + ".mp4")
+                   + " - " + clean_string_regex(os.path.splitext(audio_file)[0]) + " - " + video_id + ".mp3")
 
     try:
         command = [
