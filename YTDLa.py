@@ -449,11 +449,44 @@ def download_video_process(yt, res, more_than1080p, publishing_date, year, restr
 
     rename_files_in_temp_directory()
 
-    #print("\nMerging...")
-    if more_than1080p == 0:
-        merge_video_audio(yt.video_id, publishing_date, res, year, restricted)
+    if audio_or_video:
+        convert_m4a_to_mp3(yt.video_id, publishing_date, res, year, restricted)
     else:
-        convert_m4a_to_opus_and_merge(yt.video_id, publishing_date, res, year, restricted)
+        if more_than1080p == 0:
+            merge_video_audio(yt.video_id, publishing_date, res, year, restricted)
+        else:
+            convert_m4a_to_opus_and_merge(yt.video_id, publishing_date, res, year, restricted)
+
+
+def convert_m4a_to_mp3(video_id, publish_date, video_resolution, year, restricted):
+    video_file, audio_file = find_media_files(".")
+    if not audio_file:
+        print("❌ No M4A files found in the current directory.")
+        return
+
+    restricted_path = "/"
+    if restricted:
+        restricted_path = "/restricted/"
+
+    output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
+                   + " - " + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + video_id + ".mp4")
+
+    try:
+        command = [
+            "ffmpeg", "-loglevel", "quiet", "-stats",
+            "-i", audio_file,  # Input file
+            "-acodec", "libmp3lame",  # Use MP3 codec
+            "-q:a", "2",  # Quality setting (lower is better)
+            output_file
+        ]
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    except Exception as ee:
+        print(f"❌ Error merging files: {ee}")
+        sys.exit(1)
+
+    print(print_colored_text("\nMP3 downloaded", BCOLORS.GREEN))
+    delete_temp_files()
 
 
 def merge_video_audio(video_id, publish_date, video_resolution, year, restricted):
@@ -463,10 +496,10 @@ def merge_video_audio(video_id, publish_date, video_resolution, year, restricted
         print("❌ No MP4 or M4A files found in the current directory.")
         return
 
+    restricted_path = "/"
     if restricted:
         restricted_path = "/restricted/"
-    else:
-        restricted_path = "/"
+
     output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
                    + " - " + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + video_id + ".mp4")
 
