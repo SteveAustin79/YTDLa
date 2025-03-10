@@ -280,7 +280,7 @@ def user_selection(u_lines, show_latest_video_date):
                     if latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE':
                         latest_date = latest_video[i].publish_date.strftime("%Y-%m-%d")
                         got_it = find_file_by_string(
-                            output_dir + "/" + clean_string_regex(ytchannel.channel_name).rstrip(), latest_date, "")
+                            output_dir + "/" + clean_string_regex(ytchannel.channel_name).rstrip(), latest_date, "", False)
                         if got_it:
                             latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
                         else:
@@ -343,12 +343,14 @@ def print_resolutions(yt):
     return unique_resolutions
 
 
-def find_file_by_string(directory, search_string, resolution):
+def find_file_by_string(directory, search_string, resolution, mp3):
     """Searches a directory for a file containing a specific string in its filename.
     Returns the filename if found, otherwise returns None.
     """
     if resolution=="max":
         resolution = ""
+    if mp3:
+        resolution = "mp3"
 
     if not os.path.exists(directory):
         #print("Error: Directory does not exist!")
@@ -836,7 +838,7 @@ while True:
             if not os.path.exists(ytchannel_path):
                 os.makedirs(ytchannel_path)
 
-            if find_file_by_string(ytchannel_path, only_video_id, limit_resolution_to) is not None:
+            if find_file_by_string(ytchannel_path, only_video_id, limit_resolution_to, audio_or_video_bool) is not None:
                 count_ok_videos += 1
                 count_skipped += 1
                 print(print_colored_text(f"\rSkipping {count_skipped} Videos", BCOLORS.MAGENTA), end="", flush=True)
