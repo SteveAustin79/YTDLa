@@ -472,8 +472,8 @@ def convert_m4a_to_mp3(video_id, publish_date, video_resolution, year, restricte
     if restricted:
         restricted_path = "/restricted/"
 
-    output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
-                   + " - " + clean_string_regex(os.path.splitext(audio_file)[0]) + " - " + video_id + ".mp3")
+    output_file = (ytchannel_path + str(year) + restricted_path + publish_date +
+                   " - " + clean_string_regex(os.path.splitext(audio_file)[0]) + " - " + video_id + ".mp3")
 
     try:
         command = [
