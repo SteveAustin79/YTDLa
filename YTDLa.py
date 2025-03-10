@@ -717,7 +717,7 @@ while True:
         audio_or_video = smart_input("\nAudio or Video?  a/v", "a")
 
         if audio_or_video:
-            limit_resolution_to = ""
+            limit_resolution_to = "max"
         else:
             limit_resolution_to = smart_input("Max. Resolution:  ", default_max_res)
 
