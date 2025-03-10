@@ -427,22 +427,22 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
                         publishing_date) + " - " + clean_string_regex(
                         yt.title) + " - " + video_id + ".mp3"):
                 print(print_colored_text("\nMP3 already downloaded\n", BCOLORS.GREEN))
-            else:
-                more_than1080p = 0
 
-                if res == "2160p" or res == "1440p":
-                    more_than1080p = 1
-                    video_file_tmp, audio_file_tmp = find_media_files("tmp")
-                    if video_file_tmp is not None:
-                        path = (ytchannel_path + str(year) + "/" + restricted_path_snippet + str(
-                            publishing_date) + " - " + res + " - "
-                                + clean_string_regex(os.path.splitext(video_file_tmp)[0]) + " - " + video_id + ".mp4")
-                        print("\nMerged file already exists!")
-                        convert_webm_to_mp4("tmp/" + video_file_tmp, path, restricted)
-                    else:
-                        download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
-                else:
-                    download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
+        more_than1080p = 0
+
+        if res == "2160p" or res == "1440p":
+            more_than1080p = 1
+            video_file_tmp, audio_file_tmp = find_media_files("tmp")
+            if video_file_tmp is not None:
+                path = (ytchannel_path + str(year) + "/" + restricted_path_snippet + str(
+                    publishing_date) + " - " + res + " - "
+                        + clean_string_regex(os.path.splitext(video_file_tmp)[0]) + " - " + video_id + ".mp4")
+                print("\nMerged file already exists!")
+                convert_webm_to_mp4("tmp/" + video_file_tmp, path, restricted)
+            else:
+                download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
+        else:
+            download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
 
 
 def download_video_process(yt, res, more_than1080p, publishing_date, year, restricted):
