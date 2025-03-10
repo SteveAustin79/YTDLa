@@ -18,7 +18,7 @@ python3 -m venv venv
 ```
 4. Install dependencies
 ```diff
-sudo venv/bin/python3 -m pip install pytubefix ffmpeg-python
+venv/bin/python3 -m pip install pytubefix ffmpeg-python
 ```
 5. Create and modify config.json
 ```diff
