@@ -717,53 +717,50 @@ while True:
         audio_or_video = smart_input("\nAudio or Video?  a/v", "a")
 
         if audio_or_video:
-            print("AUDIO")
+            limit_resolution_to = ""
         else:
             limit_resolution_to = smart_input("Max. Resolution:  ", default_max_res)
 
-            ignore_min_duration = smart_input("Ignore min_duration?  Y/n", default_ignore_min_duration)
-            ignore_min_duration_bool = True
-            if ignore_min_duration == "n":
-                ignore_min_duration_bool = False
-                print(print_colored_text("Ignoring Video(s) < " + str(min_duration) + " Minutes!", BCOLORS.RED))
+        ignore_min_duration = smart_input("Ignore min_duration?  Y/n", default_ignore_min_duration)
+        ignore_min_duration_bool = True
+        if ignore_min_duration == "n":
+            ignore_min_duration_bool = False
+            print(print_colored_text("Ignoring Video(s) < " + str(min_duration) + " Minutes!", BCOLORS.RED))
 
-            ignore_max_duration = smart_input("Ignore max_duration?  Y/n", default_ignore_max_duration)
-            ignore_max_duration_bool = True
-            if ignore_max_duration == "n":
-                ignore_max_duration_bool = False
-                print(print_colored_text("Ignoring Video(s) > " + str(max_duration) + " Minutes!", BCOLORS.RED))
+        ignore_max_duration = smart_input("Ignore max_duration?  Y/n", default_ignore_max_duration)
+        ignore_max_duration_bool = True
+        if ignore_max_duration == "n":
+            ignore_max_duration_bool = False
+            print(print_colored_text("Ignoring Video(s) > " + str(max_duration) + " Minutes!", BCOLORS.RED))
 
-            skip_restricted_bool = False
-            skip_restricted = smart_input("Skip restricted Video(s)?  Y/n ", default_skip_restricted)
-            if skip_restricted == "y":
-                skip_restricted_bool = True
-                print(print_colored_text("Skipping restricted Video(s)!", BCOLORS.RED))
+        skip_restricted_bool = False
+        skip_restricted = smart_input("Skip restricted Video(s)?  Y/n ", default_skip_restricted)
+        if skip_restricted == "y":
+            skip_restricted_bool = True
+            print(print_colored_text("Skipping restricted Video(s)!", BCOLORS.RED))
 
-            min_video_views = int(smart_input("Minimum Views (0=disabled): ", default_minimum_views))
-            if min_video_views > 0:
-                min_video_views_bool = True
-            else:
-                min_video_views_bool = False
+        min_video_views = int(smart_input("Minimum Views (0=disabled): ", default_minimum_views))
+        if min_video_views > 0:
+            min_video_views_bool = True
+        else:
+            min_video_views_bool = False
 
-            exclude_video_ids = smart_input("\nExclude Video ID's (comma separated list): ", default_exclude_videos)
-            exclude_list = []
-            if exclude_video_ids != "":
-                exclude_list = clean_youtube_urls(string_to_list(exclude_video_ids))
+        exclude_video_ids = smart_input("\nExclude Video ID's (comma separated list): ", default_exclude_videos)
+        exclude_list = []
+        if exclude_video_ids != "":
+            exclude_list = clean_youtube_urls(string_to_list(exclude_video_ids))
 
-            if video_listings:
-                if len(selected_video_ids) > 0:
-                    default_include_videos = ",".join(selected_video_ids)
-            include_video_ids = smart_input("Include Video ID's (comma separated list): ", default_include_videos)
-            include_list = []
-            if include_video_ids != "":
-                include_list = clean_youtube_urls(string_to_list(include_video_ids))
+        if video_listings:
+            if len(selected_video_ids) > 0:
+                default_include_videos = ",".join(selected_video_ids)
+        include_video_ids = smart_input("Include Video ID's (comma separated list): ", default_include_videos)
+        include_list = []
+        if include_video_ids != "":
+            include_list = clean_youtube_urls(string_to_list(include_video_ids))
 
-            video_name_filter = str(
-                smart_input("\nEnter filter word(s) (comma separated list): ", default_filter_words))
-            video_name_filter_list = string_to_list(video_name_filter)
-
-
-
+        video_name_filter = str(
+            smart_input("\nEnter filter word(s) (comma separated list): ", default_filter_words))
+        video_name_filter_list = string_to_list(video_name_filter)
 
         count_total_videos = 0
         count_restricted_videos = 0
