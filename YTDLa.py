@@ -192,9 +192,10 @@ def print_video_infos(yt, res, video_views):
     else:
         print(length_title_value, print_colored_text("  (" + min_duration + "m < " + max_duration + "m)", BCOLORS.BLACK))
 
-    print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
-          print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
-    print("               ", print_colored_text(print_resolutions(yt), BCOLORS.BLACK))
+    if not audio_or_video:
+        print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
+            print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
+        print("               ", print_colored_text(print_resolutions(yt), BCOLORS.BLACK))
 
 
 def get_free_space(path):
@@ -373,7 +374,6 @@ def limit_resolution(resolution, limit):
 def download_video(channel_name, video_id, counter_id, video_total_count, video_views, restricted):
     restricted_path_snippet = ""
     colored_video_id = video_id
-    #header_width = 95
     header_width = (header_width_global + 11)
     if restricted:
         yt = YouTube(youtube_base_url + video_id, use_oauth=True, allow_oauth_cache=True,
@@ -404,6 +404,7 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
             os.makedirs(ytchannel_path + f"{str(year)}")
 
     res = max(print_resolutions(yt), key=lambda x: int(x.rstrip('p')))
+
     if limit_resolution_to != "max":
         res = limit_resolution(res, limit_resolution_to)
 
@@ -431,12 +432,13 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
 
 
 def download_video_process(yt, res, more_than1080p, publishing_date, year, restricted):
-    print("\nDownloading VIDEO...")
+    if not audio_or_video:
+        print("\nDownloading VIDEO...")
 
-    for idx, i in enumerate(yt.streams):
-        if i.resolution == res:
-            break
-    yt.streams[idx].download()
+        for idx, i in enumerate(yt.streams):
+            if i.resolution == res:
+                break
+        yt.streams[idx].download()
 
     print("\nDownloading AUDIO...")
 
