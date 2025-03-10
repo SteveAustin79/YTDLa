@@ -599,9 +599,6 @@ while True:
 
         print(print_colored_text("\n" + c.channel_url, BCOLORS.CYAN))
 
-        audio_or_video = smart_input("Audio or Video?  a/v", "a")
-
-
         selected_video_ids = []
 
         if video_listings:
@@ -716,6 +713,8 @@ while True:
 
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
+
+        audio_or_video = smart_input("\nAudio or Video?  a/v", "a")
 
         if audio_or_video:
             print("AUDIO")
