@@ -31,15 +31,13 @@ REQUIRED_APP_CONFIG = {
     "min_duration_in_minutes": "",
     "max_duration_in_minutes": "",
     "year_subfolders": "",
-    "video_listings": "",
-    "show_latest_video_date": False
+    "video_listings": ""
 }
 
 REQUIRED_VIDEO_CHANNEL_CONFIG = {
     "c_max_resolution": "",
     "c_ignore_min_duration": "",
     "c_ignore_max_duration": "",
-    "c_only_restricted": "",
     "c_skip_restricted": "",
     "c_minimum_views": "",
     "c_exclude_video_ids": "",
@@ -149,12 +147,12 @@ def print_configuration():
         video_listings_colored = print_colored_text(video_listings, BCOLORS.RED)
     print(print_colored_text("Video Listings:                     ", BCOLORS.BLACK),
           video_listings_colored)
-    if show_latest_video_date:
-        show_latest_video_date_colored = print_colored_text(show_latest_video_date, BCOLORS.GREEN)
-    else:
-        show_latest_video_date_colored = print_colored_text(show_latest_video_date, BCOLORS.RED)
-    print(print_colored_text("Show latest Video date:             ", BCOLORS.BLACK),
-          show_latest_video_date_colored)
+    # if show_latest_video_date:
+    #     show_latest_video_date_colored = print_colored_text(show_latest_video_date, BCOLORS.GREEN)
+    # else:
+    #     show_latest_video_date_colored = print_colored_text(show_latest_video_date, BCOLORS.RED)
+    # print(print_colored_text("Show latest Video date:             ", BCOLORS.BLACK),
+    #       show_latest_video_date_colored)
     print_asteriks_line()
     print("")
 
@@ -270,7 +268,7 @@ def user_selection(u_lines, show_latest_video_date):
     # temp_disable = smart_input("Disable latest video date for this run?  Y/n", "n")
     # print()
     # if temp_disable == "y":
-    show_latest_video_date = False
+    #    show_latest_video_date = False
 
     print("Select channel:")
     for index, line in enumerate(u_lines, start=1):
@@ -566,11 +564,12 @@ while True:
             max_duration = config["max_duration_in_minutes"]
             year_subfolders = config["year_subfolders"]
             video_listings = config["video_listings"]
-            show_latest_video_date= config["show_latest_video_date"]
         except Exception as e:
             print("An error occurred, incomplete config file:", str(e))
             cc_check_and_update_channel_config("config.json", REQUIRED_APP_CONFIG)
             continue
+
+        show_latest_video_date = False
 
         # Create an empty list
         video_list = []
