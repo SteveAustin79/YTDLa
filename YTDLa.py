@@ -418,7 +418,7 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
 
     if os.path.exists(
             ytchannel_path + year + "/" + restricted_path_snippet + str(publishing_date) + " - " + res + " - " + clean_string_regex(
-                yt.title) + " - " + video_id + ".mp4") or not audio_or_video_bool:
+                yt.title) + " - " + video_id + ".mp4") and not audio_or_video_bool:
         print(print_colored_text("\nVideo already downloaded\n", BCOLORS.GREEN))
     else:
         if audio_or_video_bool:
