@@ -179,7 +179,7 @@ def print_video_infos(yt, res, video_views):
 
     frames_per_second = ""
 
-    if not audio_or_video:
+    if not audio_or_video_bool:
         match = re.search(r"'fps':\s*(\d+)", str(yt.vid_info))
         if match:
             fps_value = int(match.group(1))
@@ -196,7 +196,7 @@ def print_video_infos(yt, res, video_views):
     else:
         print(length_title_value, print_colored_text("  (" + min_duration + "m < " + max_duration + "m)", BCOLORS.BLACK))
 
-    if not audio_or_video:
+    if not audio_or_video_bool:
         print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
             print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
         print("               ", print_colored_text(print_resolutions(yt), BCOLORS.BLACK))
@@ -436,7 +436,7 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
 
 
 def download_video_process(yt, res, more_than1080p, publishing_date, year, restricted):
-    if not audio_or_video:
+    if not audio_or_video_bool:
         print("\nDownloading VIDEO...")
 
         for idx, i in enumerate(yt.streams):
@@ -453,7 +453,7 @@ def download_video_process(yt, res, more_than1080p, publishing_date, year, restr
 
     rename_files_in_temp_directory()
 
-    if audio_or_video:
+    if audio_or_video_bool:
         convert_m4a_to_mp3(yt.video_id, publishing_date, res, year, restricted)
     else:
         if more_than1080p == 0:
@@ -754,8 +754,11 @@ while True:
             default_include_videos = video_id_from_single_video
 
         audio_or_video = smart_input("\nAudio or Video?  a/v", "a")
+        audio_or_video_bool = True
+        if audio_or_video == "v":
+            audio_or_video_bool = False
 
-        if audio_or_video:
+        if audio_or_video_bool:
             limit_resolution_to = "max"
         else:
             limit_resolution_to = smart_input("Max. Resolution:  ", default_max_res)
