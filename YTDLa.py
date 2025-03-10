@@ -147,12 +147,6 @@ def print_configuration():
         video_listings_colored = print_colored_text(video_listings, BCOLORS.RED)
     print(print_colored_text("Video Listings:                     ", BCOLORS.BLACK),
           video_listings_colored)
-    # if show_latest_video_date:
-    #     show_latest_video_date_colored = print_colored_text(show_latest_video_date, BCOLORS.GREEN)
-    # else:
-    #     show_latest_video_date_colored = print_colored_text(show_latest_video_date, BCOLORS.RED)
-    # print(print_colored_text("Show latest Video date:             ", BCOLORS.BLACK),
-    #       show_latest_video_date_colored)
     print_asteriks_line()
     print("")
 
@@ -605,14 +599,8 @@ while True:
 
         print(print_colored_text("\n" + c.channel_url, BCOLORS.CYAN))
 
-        # if show_latest_video_date:
-        #     latest_video = list(c.videos)
-        #     latest_date = latest_video[0].publish_date.strftime("%Y-%m-%d")
-        #     got_it = find_file_by_string(output_dir + "/" + clean_string_regex(c.channel_name).rstrip(), latest_date,
-        #                                  "")
-        #     if got_it:
-        #         latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
-        #     print("\nLatest Video:  ", latest_date)
+        audio_or_video = smart_input("Audio or Video?  a/v", "a")
+
 
         selected_video_ids = []
 
@@ -664,7 +652,6 @@ while True:
         default_max_res = "max"
         default_ignore_min_duration = "y"
         default_ignore_max_duration = "y"
-        default_only_restricted = "n"
         default_skip_restricted = "n"
         default_minimum_views = "0"
         default_exclude_videos = ""
@@ -700,13 +687,6 @@ while True:
                 incomplete_config = True
                 incomplete_string.append("c_ignore_max_duration")
 
-            if "c_only_restricted" in channel_config:
-                if channel_config["c_only_restricted"] != "":
-                    default_only_restricted = channel_config["c_only_restricted"]
-            else:
-                incomplete_config = True
-                incomplete_string.append("c_only_restricted")
-
             if "c_skip_restricted" in channel_config:
                 if channel_config["c_skip_restricted"] != "":
                     default_skip_restricted = channel_config["c_skip_restricted"]
@@ -737,55 +717,54 @@ while True:
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
 
-        limit_resolution_to = smart_input("Max. Resolution:  ", default_max_res)
+        if audio_or_video:
+            print("AUDIO")
+        else:
+            limit_resolution_to = smart_input("Max. Resolution:  ", default_max_res)
 
-        ignore_min_duration = smart_input("Ignore min_duration?  Y/n", default_ignore_min_duration)
-        ignore_min_duration_bool = True
-        if ignore_min_duration == "n":
-            ignore_min_duration_bool = False
-            print(print_colored_text("Ignoring Video(s) < " + str(min_duration) + " Minutes!", BCOLORS.RED))
+            ignore_min_duration = smart_input("Ignore min_duration?  Y/n", default_ignore_min_duration)
+            ignore_min_duration_bool = True
+            if ignore_min_duration == "n":
+                ignore_min_duration_bool = False
+                print(print_colored_text("Ignoring Video(s) < " + str(min_duration) + " Minutes!", BCOLORS.RED))
 
-        ignore_max_duration = smart_input("Ignore max_duration?  Y/n", default_ignore_max_duration)
-        ignore_max_duration_bool = True
-        if ignore_max_duration == "n":
-            ignore_max_duration_bool = False
-            print(print_colored_text("Ignoring Video(s) > " + str(max_duration) + " Minutes!", BCOLORS.RED))
+            ignore_max_duration = smart_input("Ignore max_duration?  Y/n", default_ignore_max_duration)
+            ignore_max_duration_bool = True
+            if ignore_max_duration == "n":
+                ignore_max_duration_bool = False
+                print(print_colored_text("Ignoring Video(s) > " + str(max_duration) + " Minutes!", BCOLORS.RED))
 
-        only_restricted_videos = smart_input("Only restricted video(s)?  Y/n", default_only_restricted)
-        only_restricted_videos_bool = False
-        if only_restricted_videos == "y":
-            only_restricted_videos_bool = True
-            print(print_colored_text("Downloading only restricted Video(s)!", BCOLORS.RED))
-
-        skip_restricted_bool = False
-        if not only_restricted_videos_bool:
+            skip_restricted_bool = False
             skip_restricted = smart_input("Skip restricted Video(s)?  Y/n ", default_skip_restricted)
             if skip_restricted == "y":
                 skip_restricted_bool = True
                 print(print_colored_text("Skipping restricted Video(s)!", BCOLORS.RED))
 
-        min_video_views = int(smart_input("Minimum Views (0=disabled): ", default_minimum_views))
-        if min_video_views > 0:
-            min_video_views_bool = True
-        else:
-            min_video_views_bool = False
+            min_video_views = int(smart_input("Minimum Views (0=disabled): ", default_minimum_views))
+            if min_video_views > 0:
+                min_video_views_bool = True
+            else:
+                min_video_views_bool = False
 
-        exclude_video_ids = smart_input("\nExclude Video ID's (comma separated list): ", default_exclude_videos)
-        exclude_list = []
-        if exclude_video_ids != "":
-            exclude_list = clean_youtube_urls(string_to_list(exclude_video_ids))
+            exclude_video_ids = smart_input("\nExclude Video ID's (comma separated list): ", default_exclude_videos)
+            exclude_list = []
+            if exclude_video_ids != "":
+                exclude_list = clean_youtube_urls(string_to_list(exclude_video_ids))
 
-        if video_listings:
-            if len(selected_video_ids) > 0:
-                default_include_videos = ",".join(selected_video_ids)
-        include_video_ids = smart_input("Include Video ID's (comma separated list): ", default_include_videos)
-        include_list = []
-        if include_video_ids != "":
-            include_list = clean_youtube_urls(string_to_list(include_video_ids))
+            if video_listings:
+                if len(selected_video_ids) > 0:
+                    default_include_videos = ",".join(selected_video_ids)
+            include_video_ids = smart_input("Include Video ID's (comma separated list): ", default_include_videos)
+            include_list = []
+            if include_video_ids != "":
+                include_list = clean_youtube_urls(string_to_list(include_video_ids))
 
-        video_name_filter = str(
-            smart_input("\nEnter filter word(s) (comma separated list): ", default_filter_words))
-        video_name_filter_list = string_to_list(video_name_filter)
+            video_name_filter = str(
+                smart_input("\nEnter filter word(s) (comma separated list): ", default_filter_words))
+            video_name_filter_list = string_to_list(video_name_filter)
+
+
+
 
         count_total_videos = 0
         count_restricted_videos = 0
@@ -837,7 +816,7 @@ while True:
 
                     if (video.age_restricted == False and
                             video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
-                            do_not_download == 0 and not only_restricted_videos_bool):
+                            do_not_download == 0):
                         count_ok_videos += 1
                         count_this_run += 1
                         count_skipped = 0
