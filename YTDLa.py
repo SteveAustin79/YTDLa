@@ -493,7 +493,7 @@ def convert_m4a_to_mp3(video_id, publish_date, video_resolution, year, restricte
             "-q:a", "2",  # Quality setting (lower is better)
             output_file
         ]
-        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(command, check=True)
 
     except Exception as ee:
         print(f"❌ Error merging files: {ee}")
