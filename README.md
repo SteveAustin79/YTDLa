@@ -1,7 +1,27 @@
+# YTDL - YouTube Downloader 0.1
+A command line YouTube video downloader. Download one, multiple or all videos from a specific YouTube channel in any available resolution as mp4.
+
+Restricted video download possible, but requires authentication via accounts.google.com/device.
+
+### Features
+- channel config file with default filters (file must be located in target directory)
+- filters: video title name, minimum video views, video duration, exclude/include video ID's 
+- channels.txt: YouTube Channels list
+- video resolutions > 1080p only provided as webm by YouTube -> converted to mp4 after downloading
+- auto download highest available resolution (can be limited)
+- year sub directory structure switch in config.json
+- skipping already downloaded videos
+
+### History
+- 20250310 - v0.1 - initial version, based on YTDLchannel v1.0, added mp3 support
+
+## Disclaimer
+- this app is meant only for non-copyright/non-protected videos, or for backup purposes
+
 ## Prerequisites
 - Git (https://git-scm.com/downloads)
 - Python (https://www.python.org)
-- FFMPG (https://ffmpeg.org)
+- FFMPG (https://ffmpeg.org) --> Add PATH environment variable (pointing to ffmpeg bin folder)
 
 ## Installation
 1. Clone repository:
