@@ -145,7 +145,7 @@ def print_configuration():
         video_listings_colored = print_colored_text(video_listing, BCOLORS.GREEN)
     else:
         video_listings_colored = print_colored_text(video_listing, BCOLORS.RED)
-    print(print_colored_text("Video listings:                     ", BCOLORS.BLACK),
+    print(print_colored_text("Video listing:                      ", BCOLORS.BLACK),
           video_listings_colored)
     print_asteriks_line()
     print("")
