@@ -13,7 +13,7 @@ Restricted video download possible, but requires authentication via accounts.goo
 - skipping already downloaded videos
 
 ### History
-- 20250226 - v0.1 - initial version, based on YTDLchannel v1.0, added mp3 support
+- 20250310 - v0.1 - initial version, based on YTDLchannel v1.0, added mp3 support
 
 ## Disclaimer
 - this app is meant only for non-copyright/non-protected videos, or for backup purposes
