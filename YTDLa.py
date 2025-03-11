@@ -154,7 +154,7 @@ def print_configuration():
 def format_header(counter, width):
     counter_splitted = counter.split(" - ")
     counter_str = ("* " + counter_splitted[0] + " *" + print_colored_text(f" {counter_splitted[1]} ", BCOLORS.CYAN)
-                   + "| " + counter_splitted[2] + " (" + get_free_space(ytchannel_path) + " free) ")
+                   + "| " + counter_splitted[2] + " (" + get_free_space(output_dir) + " free) ")
     total_length = width - 2  # Exclude parentheses ()
 
     # Center the counter with asterisks
@@ -840,9 +840,6 @@ while True:
             print("\n")
         for url in video_watch_urls:
             only_video_id = pytubefix.extract.video_id(url)
-
-            if not os.path.exists(ytchannel_path):
-                os.makedirs(ytchannel_path)
 
             if find_file_by_string(ytchannel_path, only_video_id, limit_resolution_to, audio_or_video_bool) is not None:
                 count_ok_videos += 1
