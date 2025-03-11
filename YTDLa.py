@@ -176,17 +176,7 @@ def print_video_infos(yt, res, video_views):
     print(print_colored_text("Date:          ", BCOLORS.BLACK), yt.publish_date.strftime("%Y-%m-%d"))
 
     length_title = print_colored_text("Length:         ", BCOLORS.BLACK)
-
-    frames_per_second = ""
-
-    if not audio_or_video_bool:
-        match = re.search(r"'fps':\s*(\d+)", str(yt.vid_info))
-        if match:
-            fps_value = int(match.group(1))
-            if extract_number(res) > extract_number("1080p"):
-                frames_per_second = print_colored_text("   (" + str(yt.length * fps_value) + " Frames)", BCOLORS.BLACK)
-
-    length_title_value = length_title + str(int(yt.length / 60)) + "m" + frames_per_second
+    length_title_value = length_title + format_time(yt.length)
     if ignore_max_duration_bool and ignore_min_duration_bool:
         print(length_title_value)
     elif ignore_max_duration_bool:
@@ -200,6 +190,11 @@ def print_video_infos(yt, res, video_views):
         print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
             print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
         print("               ", print_colored_text(print_resolutions(yt), BCOLORS.BLACK))
+
+
+def format_time(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    return f"{minutes}m{seconds}s"
 
 
 def get_free_space(path):
@@ -241,7 +236,6 @@ def rename_files_in_temp_directory():
             new_path = os.path.join(directory, sanitized_name)
 
             os.rename(old_path, new_path)
-            #print(f"Renamed: {filename} → {sanitized_name}")
 
 
 def read_channel_txt_lines(filename):
@@ -256,7 +250,7 @@ def read_channel_txt_lines(filename):
         return []
 
 
-def user_selection(u_lines, show_latest_video_date):
+def user_selection(u_lines, u_show_latest_video_date):
     """Displays the lines as a selection menu and gets user input."""
     if not u_lines:
         print("No lines available for selection.")
@@ -264,14 +258,14 @@ def user_selection(u_lines, show_latest_video_date):
 
     latest_date_formated = ""
 
-    # temp_disable = smart_input("Disable latest video date for this run?  Y/n", "n")
+    # temp_disable = smart_input("Skip latest Video date for this run?  Y/n", "n")
     # print()
     # if temp_disable == "y":
-    #    show_latest_video_date = False
+    #    u_show_latest_video_date = False
 
     print("Select channel:")
     for index, line in enumerate(u_lines, start=1):
-        if show_latest_video_date:
+        if u_show_latest_video_date:
             if not line == u_lines[(len(u_lines) - 1)]:
                 spaces = 53
                 ytchannel = Channel(line)
@@ -377,6 +371,15 @@ def limit_resolution(resolution, limit):
     return max_resolution
 
 
+def create_directories(restricted, year):
+    if restricted:
+        if not os.path.exists(ytchannel_path + f"{str(year)}/restricted"):
+            os.makedirs(ytchannel_path + f"{str(year)}/restricted")
+    else:
+        if not os.path.exists(ytchannel_path + f"{str(year)}"):
+            os.makedirs(ytchannel_path + f"{str(year)}")
+
+
 def download_video(channel_name, video_id, counter_id, video_total_count, video_views, restricted):
     restricted_path_snippet = ""
     colored_video_id = video_id
@@ -401,13 +404,6 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
         year = "/" + str(yt.publish_date.strftime("%Y"))
     else:
         year = ""
-
-    if restricted:
-        if not os.path.exists(ytchannel_path + f"{str(year)}/restricted"):
-            os.makedirs(ytchannel_path + f"{str(year)}/restricted")
-    else:
-        if not os.path.exists(ytchannel_path + f"{str(year)}"):
-            os.makedirs(ytchannel_path + f"{str(year)}")
 
     res = max(print_resolutions(yt), key=lambda x: int(x.rstrip('p')))
 
@@ -438,7 +434,7 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
                     publishing_date) + " - " + res + " - "
                         + clean_string_regex(os.path.splitext(video_file_tmp)[0]) + " - " + video_id + ".mp4")
                 print("\nMerged file already exists!")
-                convert_webm_to_mp4("tmp/" + video_file_tmp, path, restricted)
+                convert_webm_to_mp4("tmp/" + video_file_tmp, path, restricted, year)
             else:
                 download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
         else:
@@ -482,6 +478,7 @@ def convert_m4a_to_mp3(video_id, publish_date, video_resolution, year, restricte
     if restricted:
         restricted_path = "/restricted/"
 
+    create_directories(restricted, year)
     output_file = (ytchannel_path + str(year) + restricted_path + publish_date +
                    " - " + clean_string_regex(os.path.splitext(audio_file)[0]) + " - " + video_id + ".mp3")
     print("")
@@ -514,23 +511,19 @@ def merge_video_audio(video_id, publish_date, video_resolution, year, restricted
     if restricted:
         restricted_path = "/restricted/"
 
+    create_directories(restricted, year)
     output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
                    + " - " + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + video_id + ".mp4")
 
     """Merge video and audio into a single MP4 file using FFmpeg."""
     try:
-        # Input video and audio streams
-        m_video = ffmpeg.input(video_file)
-        audio = ffmpeg.input(audio_file)
-
         print("\nMerging...")
-        # Merge video and audio
-        output = ffmpeg.output(m_video, audio, output_file, vcodec="copy", acodec="aac", strict="experimental")
-        #output = output.global_args("-stats")
+        command = [
+            "ffmpeg", "-loglevel", "quiet", "-stats", "-i", video_file, "-i", audio_file,
+            "-c:v", "copy", "-c:a", "copy", output_file
+        ]
+        subprocess.run(command, check=True)
 
-        # Run FFmpeg command
-        ffmpeg.run(output, overwrite_output=True, quiet=True)
-        #print(f"\n✅ \033[92mMerged file saved as: {output_file}.\033[0m")
         if restricted:
             print(print_colored_text("\nRestricted Video downloaded", BCOLORS.GREEN))
         else:
@@ -551,7 +544,6 @@ def convert_m4a_to_opus_and_merge(videoid, publishdate, video_resolution, year, 
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", audio_file, "-c:a", "libopus", "audio.opus"
     ]
     subprocess.run(command, check=True)
-    # print(f"✅ Converted {audio_file} to audio.opus")
     merge_webm_opus(videoid, publishdate, video_resolution, year, restricted)
 
 
@@ -559,7 +551,7 @@ def merge_webm_opus(videoid, publishdate, video_resolution, year, restricted):
     video_file, audio_file = find_media_files(".")
     output_file = "tmp/" + video_file
     """Merge WebM video with Opus audio."""
-    print("Merging WebM video with Opus audio...")
+    print("\nMerging WebM video with Opus audio...")
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", video_file, "-i", "audio.opus",
         "-c:v", "copy", "-c:a", "copy", output_file
@@ -577,9 +569,10 @@ def merge_webm_opus(videoid, publishdate, video_resolution, year, restricted):
     convert_webm_to_mp4(output_file, path, restricted)
 
 
-def convert_webm_to_mp4(input_file, output_file, restricted):
+def convert_webm_to_mp4(input_file, output_file, restricted, year):
+    create_directories(restricted, year)
     """Convert a WebM file to MP4 (H.264/AAC)."""
-    print(f"Converting WebM to MP4... (this may take a while)")
+    print(f"\nConverting WebM to MP4... (this may take a while)")
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", input_file,
         "-c:v", "libx264", "-preset", "fast", "-crf", "23",  # H.264 video encoding
