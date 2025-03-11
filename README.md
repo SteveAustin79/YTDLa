@@ -1,5 +1,5 @@
-# YTDL - YouTube Channel Downloader 1.0
-A command line YouTube channel video downloader. Download one, multiple or all videos from a specific YouTube channel in any available resolution as mp4.
+# YTDL - YouTube Downloader 0.1
+A command line YouTube video downloader. Download one, multiple or all videos from a specific YouTube channel in any available resolution as mp4.
 
 Restricted video download possible, but requires authentication via accounts.google.com/device.
 
