@@ -21,7 +21,7 @@ Restricted video download possible, but requires authentication via accounts.goo
 ## Prerequisites
 - Git (https://git-scm.com/downloads)
 - Python (https://www.python.org)
-- FFMPG (https://ffmpeg.org)
+- FFMPG (https://ffmpeg.org) --> Add PATH environment variable (pointing to ffmpeg bin folder)
 
 ## Installation
 1. Clone repository:
