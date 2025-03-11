@@ -141,10 +141,10 @@ def print_configuration():
         year_subfolders_colored = print_colored_text(year_subfolders, BCOLORS.RED)
     print(print_colored_text("Year sub folder structure:          ", BCOLORS.BLACK),
           year_subfolders_colored)
-    if video_listings:
-        video_listings_colored = print_colored_text(video_listings, BCOLORS.GREEN)
+    if video_listing:
+        video_listings_colored = print_colored_text(video_listing, BCOLORS.GREEN)
     else:
-        video_listings_colored = print_colored_text(video_listings, BCOLORS.RED)
+        video_listings_colored = print_colored_text(video_listing, BCOLORS.RED)
     print(print_colored_text("Video listings:                     ", BCOLORS.BLACK),
           video_listings_colored)
     print_asteriks_line()
@@ -606,7 +606,7 @@ while True:
             min_duration = config["min_duration_in_minutes"]
             max_duration = config["max_duration_in_minutes"]
             year_subfolders = config["year_subfolders"]
-            video_listings = config["video_listings"]
+            video_listing = config["video_listing"]
         except Exception as e:
             print("An error occurred, incomplete config file:", str(e))
             cc_check_and_update_channel_config("config.json", REQUIRED_APP_CONFIG)
@@ -650,7 +650,7 @@ while True:
 
         selected_video_ids = []
 
-        if video_listings:
+        if video_listing:
             more_than = ""
             if len(c.video_urls) > 50:
                 more_than = " This can take a while..."
@@ -802,7 +802,7 @@ while True:
         if exclude_video_ids != "":
             exclude_list = clean_youtube_urls(string_to_list(exclude_video_ids))
 
-        if video_listings:
+        if video_listing:
             if len(selected_video_ids) > 0:
                 default_include_videos = ",".join(selected_video_ids)
         include_video_ids = smart_input("Include Video ID's (comma separated list): ", default_include_videos)
