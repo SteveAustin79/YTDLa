@@ -9,7 +9,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel
 from pytubefix.cli import on_progress
 
-version = "0.1 (20250310)"
+version = "0.1 (20250311)"
 header_width_global = 85
 
 class BCOLORS:
@@ -829,6 +829,7 @@ while True:
                         video_watch_urls.append(url.watch_url)
                 else:
                     video_watch_urls.append(url.watch_url)
+            print("\rFetching videos: " + url.video_id, end="", flush=True)
 
         print(f'\n\nTotal {count_total_videos} Video(s) by: \033[96m{c.channel_name}\033[0m\n')
 
