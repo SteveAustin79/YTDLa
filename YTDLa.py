@@ -821,18 +821,23 @@ while True:
         count_skipped = 0
 
         video_watch_urls = []
-        print()
-        for url in c.video_urls:
-            count_total_videos += 1
-            if url.video_id not in exclude_list:
-                if len(include_list) > 0:
-                    if url.video_id in include_list:
-                        video_watch_urls.append(url.watch_url)
-                else:
-                    video_watch_urls.append(url.watch_url)
-            print(f"\rFetching videos: " + url.video_id, end="", flush=True)
 
-        print(f'\n\nTotal {count_total_videos} Video(s) by: \033[96m{c.channel_name}\033[0m\n')
+        if len(include_list) > 0:
+            for include in include_list:
+                video_watch_urls.append(youtube_base_url + include)
+        else:
+            print()
+            for url in c.video_urls:
+                count_total_videos += 1
+                if url.video_id not in exclude_list:
+                    if len(include_list) > 0:
+                        if url.video_id in include_list:
+                            video_watch_urls.append(url.watch_url)
+                    else:
+                        video_watch_urls.append(url.watch_url)
+                print(f"\rFetching videos: " + url.video_id, end="", flush=True)
+
+            print(f'\n\nTotal {count_total_videos} Video(s) by: \033[96m{c.channel_name}\033[0m\n')
 
         for url in video_watch_urls:
             only_video_id = pytubefix.extract.video_id(url)
