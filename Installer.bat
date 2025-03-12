@@ -1,8 +1,9 @@
 @echo off
 
-REM SET GIT="%HOMEDRIVE%\wamp\bin\php\php5.4.16"
-echo %HOMEDRIVE%
-echo %HOMEPATH%
-echo %CD%
+SET GIT="%CD%\Sources\PortableGit\bin"
+echo %GIT%
+REM echo %HOMEDRIVE%
+REM echo %HOMEPATH%
+REM echo %CD%
 
 pause
