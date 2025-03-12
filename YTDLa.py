@@ -517,7 +517,7 @@ def merge_video_audio(video_id, publish_date, video_resolution, year, restricted
         print("\nMerging to MP4...")
         command = [
             "ffmpeg", "-loglevel", "quiet", "-stats", "-i", video_file, "-i", audio_file,
-            "-c:v", "copy", "-c:a", "copy", output_file
+            "-c:v", "copy", "-c:a", "aac", output_file
         ]
         subprocess.run(command, check=True)
 
