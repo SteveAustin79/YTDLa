@@ -13,7 +13,7 @@ Restricted video download possible, but requires authentication via accounts.goo
 - skipping already downloaded videos
 
 ### History
-- 20250311 - v0.2 - skip channel fetching if include list > 0, skip "Premiere in..." videos
+- 20250312 - v0.2 - skip channel fetching if include list > 0, skip "Premiere in..." videos
 - 20250310 - v0.1 - initial version, based on YTDLchannel v1.0, added mp3 support
 
 ## Disclaimer
