@@ -265,7 +265,8 @@ def user_selection(u_lines, u_show_latest_video_date):
                 ytchannel = Channel(line)
                 latest_video = list(ytchannel.videos)
                 for i in range(len(latest_video)):
-                    if latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE':
+                    if (latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
+                            latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE'):
                         latest_date = latest_video[i].publish_date.strftime("%Y-%m-%d")
                         got_it = find_file_by_string(
                             output_dir + "/" + clean_string_regex(ytchannel.channel_name).rstrip(), latest_date, "", False)
@@ -377,6 +378,7 @@ def create_directories(restricted, year):
 def download_video(channel_name, video_id, counter_id, video_total_count, video_views, restricted):
     restricted_path_snippet = ""
     colored_video_id = video_id
+    # header_width = 95
     header_width = (header_width_global + 11)
     if restricted:
         yt = YouTube(youtube_base_url + video_id, use_oauth=True, allow_oauth_cache=True,
@@ -387,6 +389,8 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
         header_width = (header_width_global + 20)
     else:
         yt = YouTube(youtube_base_url + video_id, on_progress_callback=on_progress)
+
+    # print(yt.vid_info)
 
     print("\n")
     print(format_header(colored_video_id + " - " + channel_name
@@ -400,7 +404,6 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
         year = ""
 
     res = max(print_resolutions(yt), key=lambda x: int(x.rstrip('p')))
-
     if limit_resolution_to != "max":
         res = limit_resolution(res, limit_resolution_to)
 
@@ -854,6 +857,7 @@ while True:
 
                     if (video.age_restricted == False and
                             video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
+                            video.vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE' and
                             do_not_download == 0):
                         count_ok_videos += 1
                         count_this_run += 1
@@ -864,6 +868,7 @@ while True:
                     else:
                         if not skip_restricted_bool:
                             if (video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
+                                    video.vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE' and
                                     do_not_download == 0):
                                 count_restricted_videos += 1
                                 count_ok_videos += 1
