@@ -7,7 +7,8 @@ SET GIT="%CD%\Sources\PortableGit\bin"
 SET FFMPEG="%CD%\Sources\ffmpeg-master-latest-win64-gpl\bin"
 SET PYTHON="%CD%"\venv\Scripts
 
-setx PATH "%GIT%;%FFMPEG%;%PYTHON%" /m
+REM setx PATH "%GIT%;%FFMPEG%;%PYTHON%" /m
+setx PATH "%GIT%;%FFMPEG%;%PYTHON%"
 
 ffmpeg
 
