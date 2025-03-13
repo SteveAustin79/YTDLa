@@ -29,7 +29,11 @@ $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys("{ENTER}")
 
-Start-Sleep -Seconds 20
+Start-Sleep -Seconds 60
+
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{ENTER}")
 
 Write-Host "This script will start the GIT installer in a few moments."
 Read-Host "Press ENTER to continue..."
