@@ -13,7 +13,8 @@ Write-Host ""
 Write-Host "Virtual Python environment created! Creating shortcuts..."
 
 $desktopPath = [System.Environment]::GetFolderPath("Desktop")  # Get desktop path
-$batchFile = "Start_YTDLa.bat"  # Change to your actual .bat file path
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$batchFile = Join-Path -Path $scriptDir -ChildPath "Start_YTDLa.bat"  # Change to your actual .bat file path
 $shortcutPath = Join-Path $desktopPath "Start_YTDLa.lnk"  # Name of the shortcut
 
 # Create a WScript Shell object
