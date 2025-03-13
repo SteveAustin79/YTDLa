@@ -48,7 +48,7 @@ Write-Host "This script will now add Environment Variables for GIT and FFMPEG." 
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $gitPath = Join-Path -Path $scriptDir -ChildPath "assets\PortableGit\cmd"
-$ffmpegPath = Join-Path -Path $scriptDir -ChildPath "ffmpeg-master-latest-win64-gpl\bin"
+$ffmpegPath = Join-Path -Path $scriptDir -ChildPath "assets\ffmpeg-master-latest-win64-gpl\bin"
 $NewPaths = "$gitPath;$ffmpegPath"
 
 $CurrentPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
@@ -70,4 +70,5 @@ Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../ve
 
 Write-Host ""
 Write-Host "Installation completed!"
-Read-Host "Start now Setup2.ps script (right click - run with PowerShell). Press ENTER to close this window..."
+Write-Host "Start now Setup2.ps script (right click - run with PowerShell)."
+Read-Host "Press ENTER to close this window..."

@@ -12,4 +12,7 @@ Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../ve
 Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m pip install pytubefix ffmpeg-python"
 
 Write-Host ""
-Read-Host "Virtual Python environment created and dependencies installed! Press ENTER to continue..."
+Write-Host "Virtual Python environment created and dependencies installed!"
+Write-Host ""
+Write-Host "Open YTDLa with Start.bat. To update the app start Update.bat."
+Read-Host "Press ENTER to continue..."
