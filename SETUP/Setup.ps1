@@ -59,4 +59,7 @@ if ($CurrentPath -notlike "*$NewPaths*") {
 }
 
 Start-Sleep -Seconds 1
+
+Start-Process -NoNewWindow -Wait -FilePath "python3" -ArgumentList "-m venv venv"
+
 Read-Host "Installation complete! Press ENTER to continue..."
