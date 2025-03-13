@@ -1,4 +1,4 @@
-Write-Host "Welcome to the Installation Script!" -ForegroundColor Cyan
+Write-Host "Welcome to the Windows 10/11 Installation Script!" -ForegroundColor Cyan
 Write-Host "This script will start the Python installer in a few moments."
 Read-Host "Press ENTER to continue..."
 
