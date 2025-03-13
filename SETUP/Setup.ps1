@@ -1,7 +1,7 @@
 Write-Host "*******************************************************" -ForegroundColor Cyan
 Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script!" -ForegroundColor Cyan
 Write-Host "*******************************************************" -ForegroundColor Cyan
-Write-Host "This script will start the Python installer and add environment variables for GIT and FFMPEG in a few moments."
+Write-Host "This script will start the Python installer, create virtual Python environment (venv) and adds environment variables for GIT and FFMPEG in a few moments."
 Write-Host "Estimated duration: 2 Minutes"
 Read-Host "Press ENTER to continue..."
 
@@ -60,6 +60,6 @@ if ($CurrentPath -notlike "*$NewPaths*") {
 
 Start-Sleep -Seconds 1
 
-Start-Process -NoNewWindow -Wait -FilePath "python3" -ArgumentList "-m venv venv"
+Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../venv"
 
 Read-Host "Installation complete! Press ENTER to continue..."
