@@ -1,0 +1,26 @@
+$exePath = "assets\python-3.13.2-amd64.exe"
+
+
+Write-Host "Welcome to the Installation Script!" -ForegroundColor Cyan
+Write-Host "This script will start the installer in a few moments."
+Read-Host "Press ENTER to continue..."
+
+
+# Start the installer
+Start-Process -FilePath $exePath
+
+# Wait a few seconds to ensure the window appears
+Start-Sleep -Seconds 7
+
+# Create WScript Shell object
+$wshell = New-Object -ComObject WScript.Shell
+
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{SPACE}")
+
+
