@@ -69,4 +69,5 @@ Start-Sleep -Seconds 1
 Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../venv"
 
 Write-Host ""
-Read-Host "Installation complete! Start now Setup2.ps script. Press ENTER to close this window..."
+Write-Host "Installation completed!"
+Read-Host "Start now Setup2.ps script (right click - run with PowerShell). Press ENTER to close this window..."
