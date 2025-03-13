@@ -9,7 +9,7 @@ from pytubefix import YouTube, Channel
 from pytubefix.cli import on_progress
 
 version = "0.2 (20250312)"
-header_width_global = 85
+header_width_global = 94
 
 class BCOLORS:
     CYAN       = "\033[96m"
@@ -397,12 +397,14 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
     print(format_header(colored_video_id + " - " + channel_name
                          + " - " + str(counter_id) + "/" + str(video_total_count), header_width))
 
-    publishing_date = yt.publish_date.strftime("%Y-%m-%d")
-
-    if year_subfolders:
-        year = "/" + str(yt.publish_date.strftime("%Y"))
-    else:
-        year = ""
+    publishing_date = ""
+    year = ""
+    try:
+        publishing_date = yt.publish_date.strftime("%Y-%m-%d")
+        if year_subfolders:
+            year = "/" + str(yt.publish_date.strftime("%Y"))
+    except:
+        print()
 
     res = max(print_resolutions(yt), key=lambda x: int(x.rstrip('p')))
     if limit_resolution_to != "max":
@@ -431,7 +433,7 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
                 path = (ytchannel_path + str(year) + "/" + restricted_path_snippet + str(
                     publishing_date) + " - " + res + " - "
                         + clean_string_regex(os.path.splitext(video_file_tmp)[0]) + " - " + video_id + ".mp4")
-                print("\nMerged file already exists!")
+                print(print_colored_text("\nMerged file still available!", BCOLORS.BLACK))
                 convert_webm_to_mp4("tmp/" + video_file_tmp, path, restricted, year)
             else:
                 download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
@@ -743,13 +745,12 @@ while True:
             default_filter_words = channel_config["c_filter_words"]
 
             if incomplete_config:
-                print(print_colored_text("\nFound ", BCOLORS.BLUE)
-                      + print_colored_text("incomplete ", BCOLORS.ORANGE)
+                print(print_colored_text("\nIncomplete ", BCOLORS.ORANGE)
                       + print_colored_text("channel config file! --> Adding missing key(s) to file ", BCOLORS.BLUE)
                       + print_colored_text(str(incomplete_string), BCOLORS.ORANGE))
                 cc_check_and_update_channel_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
             else:
-                print(print_colored_text("\nFound channel config file!", BCOLORS.BLUE))
+                print(print_colored_text("\nChannel config file found!", BCOLORS.BLUE))
 
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
@@ -909,7 +910,7 @@ while True:
     except KeyboardInterrupt:
         delete_temp_files()
 
-        continue_ytdl = smart_input("\n\nThere was an interrupt. Continue?  Y/n ", "y")
+        continue_ytdl = smart_input("\n\nCtrl + C detected. Continue?  Y/n ", "y")
         print("\n")
         if continue_ytdl == "y":
             continue
