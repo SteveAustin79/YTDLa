@@ -4,6 +4,8 @@ Read-Host "Press ENTER to continue..."
 
 $exePath = "assets\python-3.13.2-amd64.exe"
 
+Write-Host "DON'T TOUCH YOUR MOUSE OR KEYBOARD DURING INSTALLATION!" -ForegroundColor Red
+
 # Start the installer
 Start-Process -FilePath $exePath
 
@@ -29,7 +31,7 @@ $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys("{ENTER}")
 
-Start-Sleep -Seconds 60
+Start-Sleep -Seconds 90
 
 $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
