@@ -19,6 +19,6 @@ $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
-$wshell.SendKeys("{SPACE}")
+$wshell.SendKeys(" ")
 
-
+Start-Sleep -Seconds 30
