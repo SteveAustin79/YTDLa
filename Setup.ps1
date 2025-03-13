@@ -1,5 +1,5 @@
 Write-Host "Welcome to the Installation Script!" -ForegroundColor Cyan
-Write-Host "This script will start the installer in a few moments."
+Write-Host "This script will start the Python installer in a few moments."
 Read-Host "Press ENTER to continue..."
 
 $exePath = "assets\python-3.13.2-amd64.exe"
@@ -20,5 +20,16 @@ Start-Sleep -Seconds 1
 $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys(" ")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{ENTER}")
 
-Start-Sleep -Seconds 30
+Start-Sleep -Seconds 20
+
+Write-Host "This script will start the GIT installer in a few moments."
+Read-Host "Press ENTER to continue..."
