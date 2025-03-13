@@ -1,10 +1,8 @@
-$exePath = "assets\python-3.13.2-amd64.exe"
-
-
 Write-Host "Welcome to the Installation Script!" -ForegroundColor Cyan
 Write-Host "This script will start the installer in a few moments."
 Read-Host "Press ENTER to continue..."
 
+$exePath = "assets\python-3.13.2-amd64.exe"
 
 # Start the installer
 Start-Process -FilePath $exePath
