@@ -10,7 +10,23 @@ Read-Host "Press ENTER to continue..."
 Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv venv"
 
 Write-Host ""
-Write-Host "Virtual Python environment created!"
+Write-Host "Virtual Python environment created! Creating shortcuts..."
+
+$desktopPath = [System.Environment]::GetFolderPath("Desktop")  # Get desktop path
+$batchFile = "Start_YTDLa.bat"  # Change to your actual .bat file path
+$shortcutPath = Join-Path $desktopPath "Start_YTDLa.lnk"  # Name of the shortcut
+
+# Create a WScript Shell object
+$WScriptShell = New-Object -ComObject WScript.Shell
+
+# Create the shortcut
+$Shortcut = $WScriptShell.CreateShortcut($shortcutPath)
+$Shortcut.TargetPath = $batchFile
+$Shortcut.WorkingDirectory = Split-Path -Parent $batchFile  # Set working directory
+$Shortcut.Save()
+
+Write-Host "Shortcut created on Desktop!"
+
 Write-Host ""
 Write-Host "Open YTDLa with Start.bat. To update the app start Update.bat."
 Read-Host "Press ENTER to continue..."
