@@ -1,8 +1,11 @@
-Write-Host "*******************************************************" -ForegroundColor Cyan
+Write-Host ""
 Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script!" -ForegroundColor Cyan
-Write-Host "*******************************************************" -ForegroundColor Cyan
-Write-Host "This script will start the Python installer, create virtual Python environment (venv) and adds environment variables for GIT and FFMPEG in a few moments."
+Write-Host ""
+Write-Host "This script will start the Python installer, create virtual Python environment (venv) and "
+Write-Host "adds environment variables for GIT and FFMPEG in a few moments."
+Write-Host ""
 Write-Host "Estimated duration: 2 Minutes"
+Write-Host ""
 Read-Host "Press ENTER to continue..."
 
 $exePath = "assets\python-3.13.2-amd64.exe"
@@ -40,6 +43,7 @@ $wshell.SendKeys("{TAB}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys("{ENTER}")
 
+Write-Host ""
 Write-Host "This script will now add Environment Variables for GIT and FFMPEG." -ForegroundColor Cyan
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
@@ -53,8 +57,10 @@ $CurrentPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
 if ($CurrentPath -notlike "*$NewPaths*") {
     $UpdatedPath = "$CurrentPath;$NewPaths"
     [System.Environment]::SetEnvironmentVariable("Path", $UpdatedPath, "User")
+    Write-Host ""
     Write-Host "Path added to User PATH. Restart your shell to apply changes."
 } else {
+    Write-Host ""
     Write-Host "Path already exists in User PATH."
 }
 
@@ -62,4 +68,5 @@ Start-Sleep -Seconds 1
 
 Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../venv"
 
+Write-Host ""
 Read-Host "Installation complete! Press ENTER to continue..."
