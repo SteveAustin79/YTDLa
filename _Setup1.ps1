@@ -6,11 +6,11 @@ Write-Host "environment variables for GIT and FFMPEG in a few moments."
 Write-Host ""
 Write-Host "Estimated duration: 2 Minutes"
 Write-Host ""
+Write-Host "DON'T TOUCH YOUR MOUSE OR KEYBOARD DURING INSTALLATION!" -ForegroundColor Red
+Write-Host ""
 Read-Host "Press ENTER to continue..."
 
 $exePath = "assets\python-3.13.2-amd64.exe"
-
-Write-Host "DON'T TOUCH YOUR MOUSE OR KEYBOARD DURING INSTALLATION!" -ForegroundColor Red
 
 # Start the installer
 Start-Process -FilePath $exePath
@@ -70,5 +70,7 @@ Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../ve
 
 Write-Host ""
 Write-Host "Installation completed!"
-Write-Host "Start now Setup2.ps script (right click - run with PowerShell)."
+Write-Host ""
+Write-Host "Start now Setup2.ps script (right click - run with PowerShell)." -ForegroundColor Cyan
+Write-Host ""
 Read-Host "Press ENTER to close this window..."

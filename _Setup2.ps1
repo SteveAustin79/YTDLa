@@ -7,7 +7,7 @@ Write-Host "Estimated duration: 20 Seconds"
 Write-Host ""
 Read-Host "Press ENTER to continue..."
 
-Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../venv"
+Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv venv"
 
 Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m pip install pytubefix ffmpeg-python"
 
