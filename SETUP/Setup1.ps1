@@ -1,8 +1,8 @@
 Write-Host ""
-Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script!" -ForegroundColor Cyan
+Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script! - PART 1" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "This script will start the Python installer, create virtual Python environment (venv) and "
-Write-Host "adds environment variables for GIT and FFMPEG in a few moments."
+Write-Host "This script will start the Python installer and adds"
+Write-Host "environment variables for GIT and FFMPEG in a few moments."
 Write-Host ""
 Write-Host "Estimated duration: 2 Minutes"
 Write-Host ""
@@ -69,4 +69,4 @@ Start-Sleep -Seconds 1
 Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../venv"
 
 Write-Host ""
-Read-Host "Installation complete! Press ENTER to continue..."
+Read-Host "Installation complete! Start now Setup2.ps script. Press ENTER to close this window..."
