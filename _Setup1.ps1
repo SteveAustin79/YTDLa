@@ -71,6 +71,7 @@ Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../ve
 Write-Host ""
 Write-Host "Installation completed!"
 Write-Host ""
+Write-Host ""
 Write-Host "Start now Setup2.ps script (right click - run with PowerShell)." -ForegroundColor Cyan
 Write-Host ""
 Read-Host "Press ENTER to close this window..."
