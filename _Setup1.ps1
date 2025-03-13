@@ -1,4 +1,6 @@
 Write-Host ""
+Write-Host ""
+Write-Host ""
 Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script! - PART 1/2" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "This script will start the Python installer and adds"
