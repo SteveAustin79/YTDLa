@@ -31,7 +31,7 @@ REQUIRED_APP_CONFIG = {
     "max_duration_in_minutes": "",
     "year_subfolders": "",
     "video_listings": "",
-    "default_audioMP3": False
+    "default_audioMP3": True
 }
 
 REQUIRED_VIDEO_CHANNEL_CONFIG = {
