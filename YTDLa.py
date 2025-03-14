@@ -603,6 +603,9 @@ while True:
             cc_check_and_update_channel_config("config.json", REQUIRED_APP_CONFIG)
             continue
 
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
         show_latest_video_date = False
 
         # Create an empty list
