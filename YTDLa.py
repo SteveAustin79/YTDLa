@@ -8,7 +8,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel
 from pytubefix.cli import on_progress
 
-version = "0.2 (20250312)"
+version = "0.2 (20250314)"
 header_width_global = 94
 
 class BCOLORS:
