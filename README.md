@@ -24,7 +24,7 @@ Restricted video download possible, but requires authentication via accounts.goo
 - Python (https://www.python.org)
 - FFMPG (https://ffmpeg.org) --> Add PATH environment variable (pointing to ffmpeg bin folder)
 
-## Installation
+## Installation (Linux)
 1. Clone repository:
 ```diff
 git clone https://github.com/SteveAustin79/YTDLa.git
