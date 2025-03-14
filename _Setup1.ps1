@@ -68,8 +68,6 @@ if ($CurrentPath -notlike "*$NewPaths*") {
 
 Start-Sleep -Seconds 1
 
-Start-Process -NoNewWindow -Wait -FilePath "python" -ArgumentList "-m venv ../venv"
-
 Write-Host ""
 Write-Host "Installation completed!"
 Write-Host ""
