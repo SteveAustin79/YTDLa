@@ -56,13 +56,13 @@ def cc_load_config(file_path):
                 return {}  # Return an empty config if JSON is corrupted
     return {}  # Return an empty config if file doesn't exist
 
-def cc_save_config(cc_file_path, cc_config):
+def cc_save_config(cc_file_path: str, cc_config: str) -> None:
     """Saves the updated config dictionary back to the JSON file."""
     with open(cc_file_path, "w", encoding="utf-8") as cc_file:
         json.dump(cc_config, cc_file, indent=4, ensure_ascii=False)
     #print(f"✅ Updated config saved to {cc_file_path}")
 
-def cc_check_and_update_channel_config(cc_file_path, cc_required_config):
+def cc_check_and_update_channel_config(cc_file_path: str, cc_required_config: dict) -> None:
     """Ensures all required keys exist in the config file, adding missing ones."""
     cc_config = cc_load_config(cc_file_path)  # Load existing or empty config
 
@@ -76,57 +76,55 @@ def cc_check_and_update_channel_config(cc_file_path, cc_required_config):
     if missing_keys:
         #print(f"⚠️ Missing keys added: {', '.join(missing_keys)}")
         cc_save_config(cc_file_path, cc_config)  # Save only if changes were made
-    # else:
-    #     print("✅ All required config keys exist. No updates needed.")
 
 
-def smart_input(prompt, default_value):
+def smart_input(prompt: str, default_value: str):
     user_input = input(f"{prompt} [{default_value}]: ").strip()
     return user_input if user_input else default_value
 
 
-def clear_screen():
+def clear_screen() -> None:
     """Clears the console screen on Windows and Linux/macOS."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def load_config(c_file):
+def load_config(c_file: str):
     """Load settings from config.json."""
     with open(c_file, "r") as file:
         l_config = json.load(file)
     return l_config
 
 
-def print_asteriks_line():
+def print_asteriks_line() -> None:
     length = header_width_global
     print("*" * length)
 
 
-def print_colored_text(message_text, color):
+def print_colored_text(message_text: str, color: str) -> str:
     return f"{color}{message_text}{BCOLORS.ENDC}"
 
 
-def extract_number(res):
+def extract_number(res: str):
     return int(''.join(filter(str.isdigit, res)))  # Extracts only numbers and converts to int
 
 
-def clean_youtube_urls(toclean_video_list):
+def clean_youtube_urls(to_clean_video_list: list) -> list[str]:
     prefix = youtube_base_url
-    return [toclean_video.replace(prefix, "") for toclean_video in toclean_video_list]
+    return [to_clean_video.replace(prefix, "") for to_clean_video in to_clean_video_list]
 
 
-def clean_string_regex(text):
+def clean_string_regex(text: str) -> str:
     new_text = text.replace(":", "")
     pattern = r"[^a-zA-Z0-9 ]"
     return re.sub(pattern, "", new_text)
 
 
-def string_to_list(input_string):
+def string_to_list(input_string: str) -> list[str]:
     """Transforms a comma-separated string into a list of strings, removing extra spaces."""
     return [item.strip() for item in input_string.split(",")]
 
 
-def print_configuration():
+def print_configuration() -> None:
     print("Configuration (config.json):")
     print_asteriks_line()
     print(print_colored_text("Output directory:                   ", BCOLORS.BLACK),
@@ -151,7 +149,7 @@ def print_configuration():
     print("")
 
 
-def format_header(counter, width):
+def format_header(counter: str, width: int) -> str:
     counter_splitted = counter.split(" - ")
     counter_str = ("* " + counter_splitted[0] + " *" + print_colored_text(f" {counter_splitted[1]} ", BCOLORS.CYAN)
                    + "| " + counter_splitted[2] + " (" + get_free_space(output_dir) + " free) ")
@@ -163,7 +161,7 @@ def format_header(counter, width):
     return formatted
 
 
-def print_video_infos(yt, res, video_views):
+def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
     print(print_colored_text("Title:         ", BCOLORS.BLACK),
           print_colored_text(print_colored_text(yt.title, BCOLORS.CYAN), BCOLORS.BOLD))
 
@@ -192,12 +190,12 @@ def print_video_infos(yt, res, video_views):
         print("               ", print_colored_text(print_resolutions(yt), BCOLORS.BLACK))
 
 
-def format_time(seconds):
+def format_time(seconds: int) -> str:
     minutes, seconds = divmod(seconds, 60)
     return f"{minutes}m{seconds}s"
 
 
-def get_free_space(path):
+def get_free_space(path: str) -> str:
     """Returns the free disk space for the given path formatted in GB or MB."""
     total, used, free = shutil.disk_usage(path)  # Get disk space (in bytes)
 
@@ -210,7 +208,7 @@ def get_free_space(path):
     return formatted_space
 
 
-def format_view_count(number):
+def format_view_count(number: int) -> str:
     """Formats a number into a human-readable view count."""
     if number >= 1_000_000_000:  # Billions
         return f"{number / 1_000_000_000:.1f}B"
@@ -222,7 +220,7 @@ def format_view_count(number):
         return str(number)
 
 
-def rename_files_in_temp_directory():
+def rename_files_in_temp_directory() -> None:
     """Removes ':' from filenames in a given directory."""
     directory = os.getcwd()
     if not os.path.exists(directory):
@@ -238,7 +236,7 @@ def rename_files_in_temp_directory():
             os.rename(old_path, new_path)
 
 
-def read_channel_txt_lines(filename):
+def read_channel_txt_lines(filename: str) -> list[str]:
     """Reads all lines from a file and returns a list of lines."""
     try:
         with open(filename, "r", encoding="utf-8") as file:
@@ -250,7 +248,7 @@ def read_channel_txt_lines(filename):
         return []
 
 
-def user_selection(u_lines, u_show_latest_video_date):
+def user_selection(u_lines, u_show_latest_video_date: bool):
     """Displays the lines as a selection menu and gets user input."""
     if not u_lines:
         print("No lines available for selection.")
@@ -259,7 +257,7 @@ def user_selection(u_lines, u_show_latest_video_date):
     latest_date_formated = ""
 
     print("Select channel:")
-    for index, line in enumerate(u_lines, start=1):
+    for u_index, line in enumerate(u_lines, start=1):
         if u_show_latest_video_date:
             if not line == u_lines[(len(u_lines) - 1)]:
                 spaces = 53
@@ -275,11 +273,11 @@ def user_selection(u_lines, u_show_latest_video_date):
                             latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
                         else:
                             latest_date = print_colored_text(latest_date, BCOLORS.RED)
-                        latest_date_formated = (" " * (spaces-len(str(index))-len(line)) + "Last: "
+                        latest_date_formated = (" " * (spaces-len(str(u_index))-len(line)) + "Last: "
                                                 + latest_date + " | " + latest_video[i].video_id)
                         break
 
-        print(f"{index}. {line}{latest_date_formated}")
+        print(f"{u_index}. {line}{latest_date_formated}")
         latest_date_formated = ""
 
     while True:
@@ -293,7 +291,7 @@ def user_selection(u_lines, u_show_latest_video_date):
             print("⚠️ Invalid input. Please enter a number.")
 
 
-def delete_temp_files():
+def delete_temp_files() -> None:
     # remove video and audio streams
     video_file, audio_file = find_media_files(".")
     # Check if files exist before deleting
@@ -304,7 +302,7 @@ def delete_temp_files():
         os.remove(audio_file)
 
 
-def find_media_files(fmf_path):
+def find_media_files(fmf_path: str) -> tuple[str | None, str | None]:
     """Search for the first MP4 and M4A files in the current directory."""
     video_file = None
     audio_file = None
@@ -321,7 +319,7 @@ def find_media_files(fmf_path):
     return video_file, audio_file
 
 
-def print_resolutions(yt):
+def print_resolutions(yt: YouTube) -> list[str]:
     streams = yt.streams.filter(file_extension='mp4')  # StreamQuery object
     # Convert StreamQuery to a formatted string
     stream_string = "\n".join([str(stream) for stream in streams])
@@ -333,7 +331,7 @@ def print_resolutions(yt):
     return unique_resolutions
 
 
-def find_file_by_string(directory, search_string, resolution, mp3):
+def find_file_by_string(directory: str, search_string: str, resolution: str, mp3: bool) -> str | None:
     """Searches a directory for a file containing a specific string in its filename.
     Returns the filename if found, otherwise returns None.
     """
@@ -355,11 +353,12 @@ def find_file_by_string(directory, search_string, resolution, mp3):
     return None  # Return None if no file is found
 
 
-def limit_resolution(resolution, limit):
+def limit_resolution(resolution: str, limit: str) -> str:
     num_resolution = int(''.join(filter(str.isdigit, resolution)))  # Extract number from first resolution
+    num_limit: int = 0
     if limit!="max":
         num_limit = int(''.join(filter(str.isdigit, limit)))  # Extract number from second resolution
-    if str(limit)=="max" or num_resolution < num_limit:
+    if limit=="max" or num_resolution < num_limit:
         max_resolution = resolution
     else:
         max_resolution = limit
@@ -367,7 +366,7 @@ def limit_resolution(resolution, limit):
     return max_resolution
 
 
-def create_directories(restricted, year):
+def create_directories(restricted: bool, year: str) -> None:
     if restricted:
         if not os.path.exists(ytchannel_path + f"{str(year)}/restricted"):
             os.makedirs(ytchannel_path + f"{str(year)}/restricted")
@@ -376,7 +375,8 @@ def create_directories(restricted, year):
             os.makedirs(ytchannel_path + f"{str(year)}")
 
 
-def download_video(channel_name, video_id, counter_id, video_total_count, video_views, restricted):
+def download_video(channel_name: str, video_id: str, counter_id: int, video_total_count: int,
+                   video_views: int, restricted: bool) -> None:
     restricted_path_snippet = ""
     colored_video_id = video_id
     # header_width = 95
@@ -422,24 +422,25 @@ def download_video(channel_name, video_id, counter_id, video_total_count, video_
                         yt.title) + " - " + video_id + ".mp3"):
                 print(print_colored_text("\nMP3 already downloaded\n", BCOLORS.GREEN))
 
-        more_than1080p = 0
+        more_than1080p = False
 
         if res == "2160p" or res == "1440p":
-            more_than1080p = 1
+            more_than1080p = True
             video_file_tmp, audio_file_tmp = find_media_files("tmp")
             if video_file_tmp is not None:
                 path = (ytchannel_path + str(year) + "/" + restricted_path_snippet + str(
                     publishing_date) + " - " + res + " - "
                         + clean_string_regex(os.path.splitext(video_file_tmp)[0]) + " - " + video_id + ".mp4")
                 print(print_colored_text("\nMerged file still available!", BCOLORS.BLACK))
-                convert_webm_to_mp4("tmp/" + video_file_tmp, path, restricted, year)
+                convert_webm_to_mp4("tmp/" + video_file_tmp, path, year, restricted)
             else:
                 download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
         else:
             download_video_process(yt, res, more_than1080p, publishing_date, year, restricted)
 
 
-def download_video_process(yt, res, more_than1080p, publishing_date, year, restricted):
+def download_video_process(yt: YouTube, res: str, more_than1080p: bool, publishing_date: str, year: str,
+                           restricted: bool) -> None:
     if not audio_or_video_bool:
         print(print_colored_text("\nDownloading VIDEO...", BCOLORS.BLACK))
 
@@ -460,13 +461,13 @@ def download_video_process(yt, res, more_than1080p, publishing_date, year, restr
     if audio_or_video_bool:
         convert_m4a_to_mp3(yt.video_id, publishing_date, year, restricted)
     else:
-        if more_than1080p == 0:
-            merge_video_audio(yt.video_id, publishing_date, res, year, restricted)
-        else:
+        if more_than1080p:
             convert_m4a_to_opus_and_merge(yt.video_id, publishing_date, res, year, restricted)
+        else:
+            merge_video_audio(yt.video_id, publishing_date, res, year, restricted)
 
 
-def convert_m4a_to_mp3(video_id, publish_date, year, restricted):
+def convert_m4a_to_mp3(video_id: str, publish_date: str, year: str, restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
     if not audio_file:
         print("❌ No M4A files found in the current directory.")
@@ -498,7 +499,7 @@ def convert_m4a_to_mp3(video_id, publish_date, year, restricted):
     delete_temp_files()
 
 
-def merge_video_audio(video_id, publish_date, video_resolution, year, restricted):
+def merge_video_audio(video_id: str, publish_date: str, video_resolution: str, year: str, restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
 
     if not video_file or not audio_file:
@@ -534,7 +535,8 @@ def merge_video_audio(video_id, publish_date, video_resolution, year, restricted
         sys.exit(1)
 
 
-def convert_m4a_to_opus_and_merge(videoid, publishdate, video_resolution, year, restricted):
+def convert_m4a_to_opus_and_merge(video_id: str, publish_date: str, video_resolution: str, year: str,
+                                  restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
     """Convert M4A to Opus format (WebM-compatible)."""
     print(print_colored_text("\nConvert M4A audio to Opus format (WebM compatible)...", BCOLORS.BLACK))
@@ -542,10 +544,10 @@ def convert_m4a_to_opus_and_merge(videoid, publishdate, video_resolution, year, 
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", audio_file, "-c:a", "libopus", "audio.opus"
     ]
     subprocess.run(command, check=True)
-    merge_webm_opus(videoid, publishdate, video_resolution, year, restricted)
+    merge_webm_opus(video_id, publish_date, video_resolution, year, restricted)
 
 
-def merge_webm_opus(videoid, publishdate, video_resolution, year, restricted):
+def merge_webm_opus(video_id: str, publish_date: str, video_resolution: str, year: str, restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
     output_file = "tmp/" + video_file
     """Merge WebM video with Opus audio."""
@@ -562,12 +564,12 @@ def merge_webm_opus(videoid, publishdate, video_resolution, year, restricted):
     if restricted:
         restricted_string = "/restricted/"
 
-    path = (ytchannel_path + str(year) + restricted_string + publishdate + " - " + video_resolution + " - "
-            + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + videoid + ".mp4")
-    convert_webm_to_mp4(output_file, path, restricted, year)
+    path = (ytchannel_path + str(year) + restricted_string + publish_date + " - " + video_resolution + " - "
+            + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + video_id + ".mp4")
+    convert_webm_to_mp4(output_file, path, year, restricted)
 
 
-def convert_webm_to_mp4(input_file, output_file, restricted, year):
+def convert_webm_to_mp4(input_file: str, output_file: str, year: str, restricted: bool) -> None:
     create_directories(restricted, year)
     """Convert a WebM file to MP4 (H.264/AAC)."""
     print(print_colored_text(f"Converting WebM to MP4... (this may take a while)", BCOLORS.BLACK))
