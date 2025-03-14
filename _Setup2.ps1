@@ -31,5 +31,5 @@ $Shortcut.Save()
 Write-Host "Shortcut created on Desktop!"
 
 Write-Host ""
-Write-Host "Open YTDLa with Start.bat. To update the app start Update.bat."
+Write-Host "Open YTDLa with Start_YTDLa.bat. To update the app start Update_YTDLa.bat."
 Read-Host "Press ENTER to continue..."
