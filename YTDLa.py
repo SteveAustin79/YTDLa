@@ -8,7 +8,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel
 from pytubefix.cli import on_progress
 
-version = "0.2 (20250314)"
+version = "0.3 (20250315)"
 header_width_global = 94
 
 class BCOLORS:
@@ -30,7 +30,8 @@ REQUIRED_APP_CONFIG = {
     "min_duration_in_minutes": "",
     "max_duration_in_minutes": "",
     "year_subfolders": "",
-    "video_listings": ""
+    "video_listing": "",
+    "default_audioMP3": True
 }
 
 REQUIRED_VIDEO_CHANNEL_CONFIG = {
@@ -45,7 +46,7 @@ REQUIRED_VIDEO_CHANNEL_CONFIG = {
 }
 
 
-def cc_load_config(file_path):
+def cc_load_config(file_path: str):
     """Loads the JSON config file or creates an empty dictionary if the file doesn't exist."""
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as file:
@@ -145,6 +146,12 @@ def print_configuration() -> None:
         video_listings_colored = print_colored_text(video_listing, BCOLORS.RED)
     print(print_colored_text("Video listing:                      ", BCOLORS.BLACK),
           video_listings_colored)
+    if default_audio_mp3:
+        default_audio_mp3_colored = print_colored_text(default_audio_mp3, BCOLORS.GREEN)
+    else:
+        default_audio_mp3_colored = print_colored_text(default_audio_mp3, BCOLORS.RED)
+    print(print_colored_text("Default audio/MP3:                  ", BCOLORS.BLACK),
+          default_audio_mp3_colored)
     print_asteriks_line()
     print("")
 
@@ -187,7 +194,7 @@ def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
     if not audio_or_video_bool:
         print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
             print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
-        print("               ", print_colored_text(print_resolutions(yt), BCOLORS.BLACK))
+        print("               ", print_colored_text(str(print_resolutions(yt)), BCOLORS.BLACK))
 
 
 def format_time(seconds: int) -> str:
@@ -600,6 +607,7 @@ while True:
             max_duration = config["max_duration_in_minutes"]
             year_subfolders = config["year_subfolders"]
             video_listing = config["video_listing"]
+            default_audio_mp3 = config["default_audioMP3"]
         except Exception as e:
             print("An error occurred, incomplete config file:", str(e))
             cc_check_and_update_channel_config("config.json", REQUIRED_APP_CONFIG)
@@ -753,12 +761,18 @@ while True:
                       + print_colored_text(str(incomplete_string), BCOLORS.ORANGE))
                 cc_check_and_update_channel_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
             else:
-                print(print_colored_text("\nChannel config file found!", BCOLORS.BLUE))
+                print(print_colored_text("\nChannel config file found! ", BCOLORS.BLUE) +
+                      print_colored_text("(" + ytchannel_path + channel_config_path + ")", BCOLORS.BLACK))
 
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
 
-        audio_or_video = smart_input("\nAudio or Video?  a/v", "a")
+        if default_audio_mp3:
+            default_value_mp3 = "a"
+        else:
+            default_value_mp3 = "v"
+
+        audio_or_video = smart_input("\nAudio or Video?  a/v", default_value_mp3)
         audio_or_video_bool = True
         if audio_or_video == "v":
             audio_or_video_bool = False
