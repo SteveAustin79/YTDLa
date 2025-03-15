@@ -261,7 +261,7 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
     for u_index, line in enumerate(u_lines, start=1):
         if u_show_latest_video_date:
             if not line == u_lines[(len(u_lines) - 1)]:
-                spaces = 53
+                spaces = (header_width_global -32)
                 ytchannel = Channel(line)
                 latest_video = list(ytchannel.videos)
                 for i in range(len(latest_video)):
@@ -638,6 +638,10 @@ while True:
             ytv = YouTube(YTchannel, on_progress_callback=on_progress)
             YTchannel = ytv.channel_url
             video_id_from_single_video = ytv.video_id
+        elif "https://" not in YTchannel:
+            ytv = YouTube(youtube_base_url + YTchannel, on_progress_callback=on_progress)
+            YTchannel = ytv.channel_url
+            video_id_from_single_video = ytv.video_id
 
         c = Channel(YTchannel)
         print("\n" + print_colored_text(print_colored_text(str(c.channel_name), BCOLORS.BOLD), BCOLORS.CYAN))
@@ -772,7 +776,6 @@ while True:
             default_value_mp3 = "a"
         else:
             default_value_mp3 = "v"
-
         audio_or_video = smart_input("\nAudio or Video?  a/v", default_value_mp3)
         audio_or_video_bool = True
         if audio_or_video == "v":
