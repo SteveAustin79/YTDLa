@@ -30,7 +30,7 @@ REQUIRED_APP_CONFIG = {
     "min_duration_in_minutes": "",
     "max_duration_in_minutes": "",
     "video_listing": "",
-    "default_audioMP3": True
+    "default_audioMP3": ""
 }
 
 REQUIRED_VIDEO_CHANNEL_CONFIG = {
@@ -61,7 +61,6 @@ def cc_save_config(cc_file_path: str, cc_config: str) -> None:
     """Saves the updated config dictionary back to the JSON file."""
     with open(cc_file_path, "w", encoding="utf-8") as cc_file:
         json.dump(cc_config, cc_file, indent=4, ensure_ascii=False)
-    #print(f"✅ Updated config saved to {cc_file_path}")
 
 def cc_check_and_update_channel_config(cc_file_path: str, cc_required_config: dict) -> None:
     """Ensures all required keys exist in the config file, adding missing ones."""
@@ -75,7 +74,6 @@ def cc_check_and_update_channel_config(cc_file_path: str, cc_required_config: di
             missing_keys.append(key)
 
     if missing_keys:
-        #print(f"⚠️ Missing keys added: {', '.join(missing_keys)}")
         cc_save_config(cc_file_path, cc_config)  # Save only if changes were made
 
 
@@ -85,12 +83,10 @@ def smart_input(prompt: str, default_value: str):
 
 
 def clear_screen() -> None:
-    """Clears the console screen on Windows and Linux/macOS."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def load_config(c_file: str):
-    """Load settings from config.json."""
     with open(c_file, "r") as file:
         l_config = json.load(file)
     return l_config
@@ -121,7 +117,6 @@ def clean_string_regex(text: str) -> str:
 
 
 def string_to_list(input_string: str) -> list[str]:
-    """Transforms a comma-separated string into a list of strings, removing extra spaces."""
     return [item.strip() for item in input_string.split(",")]
 
 
@@ -197,7 +192,6 @@ def format_time(seconds: int) -> str:
 
 
 def get_free_space(path: str) -> str:
-    """Returns the free disk space for the given path formatted in GB or MB."""
     total, used, free = shutil.disk_usage(path)  # Get disk space (in bytes)
 
     # Convert bytes to GB or MB for readability
@@ -210,7 +204,6 @@ def get_free_space(path: str) -> str:
 
 
 def format_view_count(number: int) -> str:
-    """Formats a number into a human-readable view count."""
     if number >= 1_000_000_000:  # Billions
         return f"{number / 1_000_000_000:.1f}B"
     elif number >= 1_000_000:  # Millions
@@ -238,7 +231,6 @@ def rename_files_in_temp_directory() -> None:
 
 
 def read_channel_txt_lines(filename: str) -> list[str]:
-    """Reads all lines from a file and returns a list of lines."""
     try:
         with open(filename, "r", encoding="utf-8") as file:
             rc_lines = [line.strip() for line in file.readlines()]  # Remove newlines
@@ -293,21 +285,17 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
 
 
 def delete_temp_files() -> None:
-    # remove video and audio streams
     video_file, audio_file = find_media_files(".")
     # Check if files exist before deleting
     if video_file and os.path.exists(video_file):
         os.remove(video_file)
-
     if audio_file and os.path.exists(audio_file):
         os.remove(audio_file)
 
 
 def find_media_files(fmf_path: str) -> tuple[str | None, str | None]:
-    """Search for the first MP4 and M4A files in the current directory."""
     video_file = None
     audio_file = None
-
     for file in os.listdir(fmf_path):
         if file.endswith((".mp4", ".webm")) and video_file is None:
             video_file = file
@@ -333,19 +321,14 @@ def print_resolutions(yt: YouTube) -> list[str]:
 
 
 def find_file_by_string(directory: str, search_string: str, resolution: str, mp3: bool) -> str | None:
-    """Searches a directory for a file containing a specific string in its filename.
-    Returns the filename if found, otherwise returns None.
-    """
     if resolution=="max":
         resolution = ""
     if mp3:
         resolution = "mp3"
 
     if not os.path.exists(directory):
-        #print("Error: Directory does not exist!")
         return None
 
-    # Iterate over each file in the directory
     for root, _, files in os.walk(directory):  # os.walk() traverses all subdirectories
         for filename in files:
             if search_string in filename and resolution in filename:
@@ -380,19 +363,15 @@ def download_video(channel_name: str, video_id: str, counter_id: int, video_tota
                    video_views: int, restricted: bool) -> None:
     restricted_path_snippet = ""
     colored_video_id = video_id
-    # header_width = 95
     header_width = (header_width_global + 11)
     if restricted:
         yt = YouTube(youtube_base_url + video_id, use_oauth=True, allow_oauth_cache=True,
                      on_progress_callback=on_progress)
         restricted_path_snippet = "restricted/"
         colored_video_id = print_colored_text(video_id, BCOLORS.RED)
-        # header_width = 104
         header_width = (header_width_global + 20)
     else:
         yt = YouTube(youtube_base_url + video_id, on_progress_callback=on_progress)
-
-    # print(yt.vid_info)
 
     print("\n")
     print(format_header(colored_video_id + " - " + channel_name
@@ -611,7 +590,7 @@ while True:
 
         show_latest_video_date = False
 
-        # Create an empty list
+        # Create empty lists
         video_list = []
         video_list_restricted = []
 
@@ -619,8 +598,6 @@ while True:
         print(print_colored_text("\nYTDL " + str(version), BCOLORS.YELLOW))
         print("*" * len(str("YTDL " + str(version))))
         print("YouTube Downloader (Exit with Ctrl + C)")
-        #print("Exit App with Ctrl + C")
-        #print(print_colored_text("https://github.com/SteveAustin79/YTDL\n", BCOLORS.BLACK))
         print("")
         delete_temp_files()
         print_configuration()
@@ -700,7 +677,7 @@ while True:
         default_ignore_min_duration = "y"
         default_ignore_max_duration = "y"
         default_skip_restricted = "n"
-        default_minimum_views = "0"
+        default_minimum_views = 0
         default_year_subfolders = "n"
         default_exclude_videos = ""
         default_include_videos = ""
