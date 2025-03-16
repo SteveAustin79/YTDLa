@@ -8,7 +8,7 @@ Write-Host "environment variables for GIT and FFMPEG in a few moments."
 Write-Host ""
 Write-Host "Estimated duration: 2 Minutes"
 Write-Host ""
-Write-Host "DON'T TOUCH YOUR MOUSE OR KEYBOARD DURING INSTALLATION!" -ForegroundColor Red
+Write-Host "DON'T TOUCH YOUR MOUSE OR KEYBOARD FOR 90 SECONDS, UNTIL PYTHON INSTALLATION WIZARD IS CLOSED!" -ForegroundColor Red
 Write-Host ""
 Read-Host "Press ENTER to continue..."
 

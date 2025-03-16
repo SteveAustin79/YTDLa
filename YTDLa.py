@@ -8,7 +8,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel
 from pytubefix.cli import on_progress
 
-version = "0.3 (20250315)"
+version = "0.4 (20250316)"
 header_width_global = 94
 
 class BCOLORS:
@@ -29,7 +29,6 @@ REQUIRED_APP_CONFIG = {
     "youtube_base_url": "",
     "min_duration_in_minutes": "",
     "max_duration_in_minutes": "",
-    "year_subfolders": "",
     "video_listing": "",
     "default_audioMP3": True
 }
@@ -40,6 +39,7 @@ REQUIRED_VIDEO_CHANNEL_CONFIG = {
     "c_ignore_max_duration": "",
     "c_skip_restricted": "",
     "c_minimum_views": "",
+    "c_year_subfolders": "",
     "c_exclude_video_ids": "",
     "c_include_video_ids": "",
     "c_filter_words": ""
@@ -134,12 +134,6 @@ def print_configuration() -> None:
           print_colored_text(min_duration, BCOLORS.CYAN))
     print(print_colored_text("Maximum Video duration in Minutes:  ", BCOLORS.BLACK),
           print_colored_text(max_duration, BCOLORS.CYAN))
-    if year_subfolders:
-        year_subfolders_colored = print_colored_text(year_subfolders, BCOLORS.GREEN)
-    else:
-        year_subfolders_colored = print_colored_text(year_subfolders, BCOLORS.RED)
-    print(print_colored_text("Year sub folder structure:          ", BCOLORS.BLACK),
-          year_subfolders_colored)
     if video_listing:
         video_listings_colored = print_colored_text(video_listing, BCOLORS.GREEN)
     else:
@@ -267,7 +261,7 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
     for u_index, line in enumerate(u_lines, start=1):
         if u_show_latest_video_date:
             if not line == u_lines[(len(u_lines) - 1)]:
-                spaces = 53
+                spaces = (header_width_global -32)
                 ytchannel = Channel(line)
                 latest_video = list(ytchannel.videos)
                 for i in range(len(latest_video)):
@@ -605,7 +599,6 @@ while True:
             youtube_base_url = config["youtube_base_url"]
             min_duration = config["min_duration_in_minutes"]
             max_duration = config["max_duration_in_minutes"]
-            year_subfolders = config["year_subfolders"]
             video_listing = config["video_listing"]
             default_audio_mp3 = config["default_audioMP3"]
         except Exception as e:
@@ -643,6 +636,10 @@ while True:
         video_id_from_single_video = ""
         if youtube_base_url in YTchannel:
             ytv = YouTube(YTchannel, on_progress_callback=on_progress)
+            YTchannel = ytv.channel_url
+            video_id_from_single_video = ytv.video_id
+        elif "https://" not in YTchannel:
+            ytv = YouTube(youtube_base_url + YTchannel, on_progress_callback=on_progress)
             YTchannel = ytv.channel_url
             video_id_from_single_video = ytv.video_id
 
@@ -704,6 +701,7 @@ while True:
         default_ignore_max_duration = "y"
         default_skip_restricted = "n"
         default_minimum_views = "0"
+        default_year_subfolders = "n"
         default_exclude_videos = ""
         default_include_videos = ""
         default_filter_words = ""
@@ -715,7 +713,7 @@ while True:
             incomplete_string = []
             # Load channel config
             channel_config = load_config(ytchannel_path + channel_config_path)
-            # Access settings
+            # Access and set settings
             if "c_max_resolution" in channel_config:
                 if channel_config["c_max_resolution"] != "":
                     default_max_res = channel_config["c_max_resolution"]
@@ -751,6 +749,13 @@ while True:
                 incomplete_config = True
                 incomplete_string.append("c_minimum_views")
 
+            if "c_year_subfolders" in channel_config:
+                if channel_config["c_year_subfolders"] != "":
+                    default_year_subfolders = channel_config["c_year_subfolders"]
+            else:
+                incomplete_config = True
+                incomplete_string.append("c_year_subfolders")
+
             default_exclude_videos = channel_config["c_exclude_video_ids"]
             default_include_videos = channel_config["c_include_video_ids"]
             default_filter_words = channel_config["c_filter_words"]
@@ -771,7 +776,6 @@ while True:
             default_value_mp3 = "a"
         else:
             default_value_mp3 = "v"
-
         audio_or_video = smart_input("\nAudio or Video?  a/v", default_value_mp3)
         audio_or_video_bool = True
         if audio_or_video == "v":
@@ -805,6 +809,12 @@ while True:
             min_video_views_bool = True
         else:
             min_video_views_bool = False
+
+        year_subfolders = False
+        year_subfolders_temp = smart_input("Year sub folder structure?  Y/n", default_year_subfolders)
+        if year_subfolders_temp == "y":
+            year_subfolders = True
+            print(print_colored_text("Year sub folder structure active!", BCOLORS.RED))
 
         exclude_video_ids = smart_input("\nExclude Video ID's (comma separated list): ", default_exclude_videos)
         exclude_list = []
@@ -912,7 +922,6 @@ while True:
     except Exception as e:
         delete_temp_files()
         print("An error occurred:", str(e))
-
         continue_ytdl = smart_input("There was an exception. Continue?  Y/n ", "y")
         print("\n")
         if continue_ytdl == "y":
@@ -922,7 +931,6 @@ while True:
 
     except KeyboardInterrupt:
         delete_temp_files()
-
         continue_ytdl = smart_input("\n\nCtrl + C detected. Continue?  Y/n ", "y")
         print("\n")
         if continue_ytdl == "y":
