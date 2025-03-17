@@ -5,10 +5,10 @@ import subprocess
 import json
 import sys
 import pytubefix.extract
-from pytubefix import YouTube, Channel
+from pytubefix import YouTube, Channel, Playlist
 from pytubefix.cli import on_progress
 
-version = "0.4 (20250317)"
+version = "0.5 (20250318)"
 header_width_global = 97
 first_column_width = 17
 first_column_width_wide = 37
@@ -96,8 +96,7 @@ def load_config(c_file: str):
 
 
 def print_asteriks_line() -> None:
-    length = header_width_global
-    print("*" * length)
+    print("*" * header_width_global)
 
 
 def print_colored_text(message_text: str, color: str) -> str:
@@ -366,13 +365,13 @@ def download_video(channel_name: str, video_id: str, counter_id: int, video_tota
     colored_video_id = video_id
     header_width = (header_width_global + 11)
     if restricted:
-        yt = YouTube(youtube_base_url + video_id, 'WEB', use_oauth=True, allow_oauth_cache=True,
+        yt = YouTube(youtube_base_url + video_id, use_oauth=True, allow_oauth_cache=True,
                      on_progress_callback=on_progress)
         restricted_path_snippet = "restricted/"
         colored_video_id = print_colored_text(video_id, BCOLORS.RED)
         header_width = (header_width_global + 20)
     else:
-        yt = YouTube(youtube_base_url + video_id, 'WEB', on_progress_callback=on_progress)
+        yt = YouTube(youtube_base_url + video_id, on_progress_callback=on_progress)
 
     print("\n")
     print(format_header(colored_video_id + " - " + channel_name
@@ -495,7 +494,6 @@ def merge_video_audio(video_id: str, publish_date: str, video_resolution: str, y
     output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
                    + " - " + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + video_id + ".mp4")
 
-    """Merge video and audio into a single MP4 file using FFmpeg."""
     try:
         print(print_colored_text("\nMerging to MP4...", BCOLORS.BLACK))
         command = [
@@ -519,7 +517,6 @@ def merge_video_audio(video_id: str, publish_date: str, video_resolution: str, y
 def convert_m4a_to_opus_and_merge(video_id: str, publish_date: str, video_resolution: str, year: str,
                                   restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
-    """Convert M4A to Opus format (WebM-compatible)."""
     print(print_colored_text("\nConvert M4A audio to Opus format (WebM compatible)...", BCOLORS.BLACK))
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", audio_file, "-c:a", "libopus", "audio.opus"
@@ -531,7 +528,6 @@ def convert_m4a_to_opus_and_merge(video_id: str, publish_date: str, video_resolu
 def merge_webm_opus(video_id: str, publish_date: str, video_resolution: str, year: str, restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
     output_file = "tmp/" + video_file
-    """Merge WebM video with Opus audio."""
     print(print_colored_text("Merging WebM video with Opus audio...", BCOLORS.BLACK))
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", video_file, "-i", "audio.opus",
@@ -552,7 +548,6 @@ def merge_webm_opus(video_id: str, publish_date: str, video_resolution: str, yea
 
 def convert_webm_to_mp4(input_file: str, output_file: str, year: str, restricted: bool) -> None:
     create_directories(restricted, year)
-    """Convert a WebM file to MP4 (H.264/AAC)."""
     print(print_colored_text(f"Converting WebM to MP4... (this may take a while)", BCOLORS.BLACK))
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", input_file,
@@ -607,19 +602,25 @@ while True:
         if lines and len(lines) > 1:
             YTchannel = user_selection(lines, show_latest_video_date)
         else:
-            YTchannel = input("\nYouTube Channel or Video URL:  ")
+            YTchannel = input("\nYouTube Channel, Video-, or Playlist URL:  ")
         if "- Enter YouTube Channel or Video URL -" in YTchannel:
-            YTchannel = input("\nYouTube Channel or Video URL:  ")
+            YTchannel = input("\nYouTube Channel, Video-, or Playlist URL:  ")
 
         video_id_from_single_video = ""
         if youtube_base_url in YTchannel:
-            ytv = YouTube(YTchannel, 'WEB', on_progress_callback=on_progress)
+            ytv = YouTube(YTchannel, on_progress_callback=on_progress)
             YTchannel = ytv.channel_url
             video_id_from_single_video = ytv.video_id
         elif "https://" not in YTchannel:
-            ytv = YouTube(youtube_base_url + YTchannel, 'WEB', on_progress_callback=on_progress)
+            ytv = YouTube(youtube_base_url + YTchannel, on_progress_callback=on_progress)
             YTchannel = ytv.channel_url
             video_id_from_single_video = ytv.video_id
+        elif "list=" in YTchannel:
+            playlist = Playlist(YTchannel)
+            YTchannel = playlist.owner_url
+            for p_video in playlist.videos:
+                video_id_from_single_video += p_video.video_id + ","
+            video_id_from_single_video = video_id_from_single_video[:-1]
 
         c = Channel(YTchannel)
         print("\n" + print_colored_text(print_colored_text(str(c.channel_name), BCOLORS.BOLD), BCOLORS.CYAN))
@@ -844,7 +845,7 @@ while True:
                 print(print_colored_text(f"\rSkipping {count_skipped} Videos", BCOLORS.MAGENTA), end="", flush=True)
             else:
                 do_not_download = 0
-                video = YouTube(youtube_base_url + only_video_id, 'WEB', on_progress_callback=on_progress)
+                video = YouTube(youtube_base_url + only_video_id, on_progress_callback=on_progress)
 
                 if video_name_filter == "" or any(
                         word.lower() in video.title.lower() for word in video_name_filter_list):
