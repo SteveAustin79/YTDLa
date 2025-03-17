@@ -8,10 +8,13 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel
 from pytubefix.cli import on_progress
 
-version = "0.4 (20250316)"
-header_width_global = 94
+version = "0.4 (20250317)"
+header_width_global = 97
+first_column_width = 17
+first_column_width_wide = 37
 
 class BCOLORS:
+    WHITE      = "\033[97m"
     CYAN       = "\033[96m"
     MAGENTA    = "\033[95m"
     BLUE       = "\033[94m"
@@ -143,9 +146,10 @@ def print_configuration_line(config_desc_text: str, config_value: str, config_va
 
 
 def format_header(counter: str, width: int) -> str:
-    counter_splitted = counter.split(" - ")
-    counter_str = ("* " + counter_splitted[0] + " *" + print_colored_text(f" {counter_splitted[1]} ", BCOLORS.CYAN)
-                   + "| " + counter_splitted[2] + " (" + get_free_space(output_dir) + " free) ")
+    counter_split = counter.split(" - ")
+    counter_str = ("*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + " " + counter_split[0] + " " +
+                   "*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + print_colored_text(f" {counter_split[1]} ", BCOLORS.CYAN)
+                   + "| " + counter_split[2] + " (" + get_free_space(output_dir) + " free) ")
     total_length = width - 2  # Exclude parentheses ()
 
     # Center the counter with asterisks
@@ -155,18 +159,18 @@ def format_header(counter: str, width: int) -> str:
 
 
 def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
-    print(print_colored_text("Title:         ", BCOLORS.BLACK),
-          print_colored_text(print_colored_text(yt.title, BCOLORS.CYAN), BCOLORS.BOLD))
+    print(print_colored_text("Title:" + " " * (first_column_width - len("Title:")), BCOLORS.BLACK),
+          print_colored_text(print_colored_text(yt.title, BCOLORS.WHITE), BCOLORS.BOLD))
 
-    views_title = print_colored_text("Views:         ", BCOLORS.BLACK)
+    views_title = print_colored_text("Views:" + " " * (first_column_width - len("Views:")), BCOLORS.BLACK)
     if min_video_views_bool:
         print(views_title, format_view_count(video_views), " (> " + format_view_count(min_video_views) + ")")
     else:
         print(views_title, format_view_count(video_views))
 
-    print(print_colored_text("Date:          ", BCOLORS.BLACK), yt.publish_date.strftime("%Y-%m-%d"))
+    print(print_colored_text("Date:" + " " * (first_column_width - len("Date:")), BCOLORS.BLACK), yt.publish_date.strftime("%Y-%m-%d"))
 
-    length_title = print_colored_text("Length:         ", BCOLORS.BLACK)
+    length_title = print_colored_text("Length: " + " " * (first_column_width - len("Length:")), BCOLORS.BLACK)
     length_title_value = length_title + format_time(yt.length)
     if ignore_max_duration_bool and ignore_min_duration_bool:
         print(length_title_value)
@@ -178,9 +182,9 @@ def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
         print(length_title_value, print_colored_text("  (" + min_duration + "m < " + max_duration + "m)", BCOLORS.BLACK))
 
     if not audio_or_video_bool:
-        print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
+        print(print_colored_text("Resolution:" + " " * (first_column_width - len("Resolution:")), BCOLORS.BLACK),
             print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
-        print("               ", print_colored_text(str(print_resolutions(yt)), BCOLORS.BLACK))
+        print(" " * first_column_width, print_colored_text(str(print_resolutions(yt)), BCOLORS.BLACK))
 
 
 def format_time(seconds: int) -> str:
@@ -668,7 +672,7 @@ while True:
                     except ValueError:
                         print("Invalid input, please enter numbers separated by commas.")
 
-        ytchannel_path = smart_input("\nDownload Path:  ",
+        ytchannel_path = smart_input("\nDownload Path:" + " " * (first_column_width - len("Download Path:")),
                                      output_dir + "/" + clean_string_regex(c.channel_name).rstrip())
         default_max_res = "max"
         default_ignore_min_duration = "y"
@@ -741,7 +745,7 @@ while True:
                 cc_check_and_update_channel_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
             else:
                 print(print_colored_text("\nChannel config file found! ", BCOLORS.BLUE) +
-                      print_colored_text("(" + ytchannel_path + channel_config_path + ")", BCOLORS.BLACK))
+                      print_colored_text("\n" + ytchannel_path + channel_config_path, BCOLORS.BLACK))
 
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
