@@ -1,7 +1,7 @@
 Write-Host ""
 Write-Host ""
 Write-Host ""
-Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script! - PART 2/2" -ForegroundColor Cyan
+Write-Host "Welcome to the YTDLa Windows 10/11 Installation Script! - PART 2/3" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "This script will create virtual Python environment (venv)."
 Write-Host ""
