@@ -47,6 +47,12 @@ $wshell.SendKeys("{ENTER}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys("{ENTER}")
 
+Start-Sleep -Seconds 3
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{TAB}")
+Start-Sleep -Seconds 1
+$wshell.SendKeys("{ENTER}")
 
 Start-Sleep -Seconds 90
 
