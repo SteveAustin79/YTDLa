@@ -7,7 +7,7 @@ Write-Host "This script will install NodeJS in order to generate a PoToken autom
 Write-Host ""
 Write-Host "Estimated duration: 2 Minutes"
 Write-Host ""
-Write-Host "DON'T TOUCH YOUR MOUSE OR KEYBOARD FOR 90 SECONDS, UNTIL PYTHON INSTALLATION WIZARD IS CLOSED!" -ForegroundColor Red
+Write-Host "DURING INSTALLATION YOU NEED TO ACCEPT -User Account Control- with YES!!! " -ForegroundColor Red
 Write-Host ""
 Read-Host "Press ENTER to continue..."
 
@@ -22,10 +22,6 @@ Start-Sleep -Seconds 7
 # Create WScript Shell object
 $wshell = New-Object -ComObject WScript.Shell
 
-$wshell.SendKeys("{TAB}")
-Start-Sleep -Seconds 1
-$wshell.SendKeys("{TAB}")
-Start-Sleep -Seconds 1
 $wshell.SendKeys("{ENTER}")
 Start-Sleep -Seconds 3
 
@@ -47,12 +43,7 @@ $wshell.SendKeys("{ENTER}")
 Start-Sleep -Seconds 1
 $wshell.SendKeys("{ENTER}")
 
-Start-Sleep -Seconds 3
-$wshell.SendKeys("{TAB}")
-Start-Sleep -Seconds 1
-$wshell.SendKeys("{TAB}")
-Start-Sleep -Seconds 1
-$wshell.SendKeys("{ENTER}")
+
 
 Start-Sleep -Seconds 90
 
