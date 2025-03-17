@@ -141,7 +141,7 @@ def print_configuration() -> None:
     print("")
 
 def print_configuration_line(config_desc_text: str, config_value: str, config_value_color: str) -> None:
-    print(print_colored_text(config_desc_text + " " * (37 - len(config_desc_text)), BCOLORS.BLACK),
+    print(print_colored_text(config_desc_text + " " * (first_column_width_wide - len(config_desc_text)), BCOLORS.BLACK),
           print_colored_text(config_value, config_value_color))
 
 
