@@ -5,13 +5,16 @@ import subprocess
 import json
 import sys
 import pytubefix.extract
-from pytubefix import YouTube, Channel
+from pytubefix import YouTube, Channel, Playlist
 from pytubefix.cli import on_progress
 
-version = "0.4 (20250316)"
-header_width_global = 94
+version = "0.5 (20250318)"
+header_width_global = 97
+first_column_width = 17
+first_column_width_wide = 37
 
 class BCOLORS:
+    WHITE      = "\033[97m"
     CYAN       = "\033[96m"
     MAGENTA    = "\033[95m"
     BLUE       = "\033[94m"
@@ -30,7 +33,7 @@ REQUIRED_APP_CONFIG = {
     "min_duration_in_minutes": "",
     "max_duration_in_minutes": "",
     "video_listing": "",
-    "default_audioMP3": True
+    "default_audioMP3": ""
 }
 
 REQUIRED_VIDEO_CHANNEL_CONFIG = {
@@ -61,7 +64,6 @@ def cc_save_config(cc_file_path: str, cc_config: str) -> None:
     """Saves the updated config dictionary back to the JSON file."""
     with open(cc_file_path, "w", encoding="utf-8") as cc_file:
         json.dump(cc_config, cc_file, indent=4, ensure_ascii=False)
-    #print(f"✅ Updated config saved to {cc_file_path}")
 
 def cc_check_and_update_channel_config(cc_file_path: str, cc_required_config: dict) -> None:
     """Ensures all required keys exist in the config file, adding missing ones."""
@@ -75,7 +77,6 @@ def cc_check_and_update_channel_config(cc_file_path: str, cc_required_config: di
             missing_keys.append(key)
 
     if missing_keys:
-        #print(f"⚠️ Missing keys added: {', '.join(missing_keys)}")
         cc_save_config(cc_file_path, cc_config)  # Save only if changes were made
 
 
@@ -85,20 +86,17 @@ def smart_input(prompt: str, default_value: str):
 
 
 def clear_screen() -> None:
-    """Clears the console screen on Windows and Linux/macOS."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def load_config(c_file: str):
-    """Load settings from config.json."""
     with open(c_file, "r") as file:
         l_config = json.load(file)
     return l_config
 
 
 def print_asteriks_line() -> None:
-    length = header_width_global
-    print("*" * length)
+    print("*" * header_width_global)
 
 
 def print_colored_text(message_text: str, color: str) -> str:
@@ -121,39 +119,36 @@ def clean_string_regex(text: str) -> str:
 
 
 def string_to_list(input_string: str) -> list[str]:
-    """Transforms a comma-separated string into a list of strings, removing extra spaces."""
     return [item.strip() for item in input_string.split(",")]
 
 
 def print_configuration() -> None:
     print("Configuration (" + os.path.abspath("config.json") + "):")
     print_asteriks_line()
-    print(print_colored_text("Output directory:                   ", BCOLORS.BLACK),
-          print_colored_text(output_dir, BCOLORS.CYAN))
-    print(print_colored_text("Minimum Video duration in Minutes:  ", BCOLORS.BLACK),
-          print_colored_text(min_duration, BCOLORS.CYAN))
-    print(print_colored_text("Maximum Video duration in Minutes:  ", BCOLORS.BLACK),
-          print_colored_text(max_duration, BCOLORS.CYAN))
+    print_configuration_line("Output directory:", output_dir, BCOLORS.CYAN)
+    print_configuration_line("Minimum Video duration in Minutes:", min_duration, BCOLORS.CYAN)
+    print_configuration_line("Maximum Video duration in Minutes:", max_duration, BCOLORS.CYAN)
+    video_listing_color = BCOLORS.RED
     if video_listing:
-        video_listings_colored = print_colored_text(video_listing, BCOLORS.GREEN)
-    else:
-        video_listings_colored = print_colored_text(video_listing, BCOLORS.RED)
-    print(print_colored_text("Video listing:                      ", BCOLORS.BLACK),
-          video_listings_colored)
+        video_listing_color = BCOLORS.GREEN
+    print_configuration_line("Video listing:", video_listing, video_listing_color)
+    default_audio_mp3_color = BCOLORS.RED
     if default_audio_mp3:
-        default_audio_mp3_colored = print_colored_text(default_audio_mp3, BCOLORS.GREEN)
-    else:
-        default_audio_mp3_colored = print_colored_text(default_audio_mp3, BCOLORS.RED)
-    print(print_colored_text("Default audio/MP3:                  ", BCOLORS.BLACK),
-          default_audio_mp3_colored)
+        default_audio_mp3_color = BCOLORS.GREEN
+    print_configuration_line("Default audio/MP3:", default_audio_mp3, default_audio_mp3_color)
     print_asteriks_line()
     print("")
 
+def print_configuration_line(config_desc_text: str, config_value: str, config_value_color: str) -> None:
+    print(print_colored_text(config_desc_text + " " * (first_column_width_wide - len(config_desc_text)), BCOLORS.BLACK),
+          print_colored_text(config_value, config_value_color))
+
 
 def format_header(counter: str, width: int) -> str:
-    counter_splitted = counter.split(" - ")
-    counter_str = ("* " + counter_splitted[0] + " *" + print_colored_text(f" {counter_splitted[1]} ", BCOLORS.CYAN)
-                   + "| " + counter_splitted[2] + " (" + get_free_space(output_dir) + " free) ")
+    counter_split = counter.split(" - ")
+    counter_str = ("*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + " " + counter_split[0] + " " +
+                   "*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + print_colored_text(f" {counter_split[1]} ", BCOLORS.CYAN)
+                   + "| " + counter_split[2] + " (" + get_free_space(output_dir) + " free) ")
     total_length = width - 2  # Exclude parentheses ()
 
     # Center the counter with asterisks
@@ -163,18 +158,18 @@ def format_header(counter: str, width: int) -> str:
 
 
 def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
-    print(print_colored_text("Title:         ", BCOLORS.BLACK),
-          print_colored_text(print_colored_text(yt.title, BCOLORS.CYAN), BCOLORS.BOLD))
+    print(print_colored_text("Title:" + " " * (first_column_width - len("Title:")), BCOLORS.BLACK),
+          print_colored_text(print_colored_text(yt.title, BCOLORS.WHITE), BCOLORS.BOLD))
 
-    views_title = print_colored_text("Views:         ", BCOLORS.BLACK)
+    views_title = print_colored_text("Views:" + " " * (first_column_width - len("Views:")), BCOLORS.BLACK)
     if min_video_views_bool:
         print(views_title, format_view_count(video_views), " (> " + format_view_count(min_video_views) + ")")
     else:
         print(views_title, format_view_count(video_views))
 
-    print(print_colored_text("Date:          ", BCOLORS.BLACK), yt.publish_date.strftime("%Y-%m-%d"))
+    print(print_colored_text("Date:" + " " * (first_column_width - len("Date:")), BCOLORS.BLACK), yt.publish_date.strftime("%Y-%m-%d"))
 
-    length_title = print_colored_text("Length:         ", BCOLORS.BLACK)
+    length_title = print_colored_text("Length: " + " " * (first_column_width - len("Length:")), BCOLORS.BLACK)
     length_title_value = length_title + format_time(yt.length)
     if ignore_max_duration_bool and ignore_min_duration_bool:
         print(length_title_value)
@@ -186,9 +181,9 @@ def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
         print(length_title_value, print_colored_text("  (" + min_duration + "m < " + max_duration + "m)", BCOLORS.BLACK))
 
     if not audio_or_video_bool:
-        print(print_colored_text("Resolution:    ", BCOLORS.BLACK),
+        print(print_colored_text("Resolution:" + " " * (first_column_width - len("Resolution:")), BCOLORS.BLACK),
             print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
-        print("               ", print_colored_text(str(print_resolutions(yt)), BCOLORS.BLACK))
+        print(" " * first_column_width, print_colored_text(str(print_resolutions(yt)), BCOLORS.BLACK))
 
 
 def format_time(seconds: int) -> str:
@@ -197,7 +192,6 @@ def format_time(seconds: int) -> str:
 
 
 def get_free_space(path: str) -> str:
-    """Returns the free disk space for the given path formatted in GB or MB."""
     total, used, free = shutil.disk_usage(path)  # Get disk space (in bytes)
 
     # Convert bytes to GB or MB for readability
@@ -210,7 +204,6 @@ def get_free_space(path: str) -> str:
 
 
 def format_view_count(number: int) -> str:
-    """Formats a number into a human-readable view count."""
     if number >= 1_000_000_000:  # Billions
         return f"{number / 1_000_000_000:.1f}B"
     elif number >= 1_000_000:  # Millions
@@ -238,7 +231,6 @@ def rename_files_in_temp_directory() -> None:
 
 
 def read_channel_txt_lines(filename: str) -> list[str]:
-    """Reads all lines from a file and returns a list of lines."""
     try:
         with open(filename, "r", encoding="utf-8") as file:
             rc_lines = [line.strip() for line in file.readlines()]  # Remove newlines
@@ -293,21 +285,17 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
 
 
 def delete_temp_files() -> None:
-    # remove video and audio streams
     video_file, audio_file = find_media_files(".")
     # Check if files exist before deleting
     if video_file and os.path.exists(video_file):
         os.remove(video_file)
-
     if audio_file and os.path.exists(audio_file):
         os.remove(audio_file)
 
 
 def find_media_files(fmf_path: str) -> tuple[str | None, str | None]:
-    """Search for the first MP4 and M4A files in the current directory."""
     video_file = None
     audio_file = None
-
     for file in os.listdir(fmf_path):
         if file.endswith((".mp4", ".webm")) and video_file is None:
             video_file = file
@@ -333,19 +321,14 @@ def print_resolutions(yt: YouTube) -> list[str]:
 
 
 def find_file_by_string(directory: str, search_string: str, resolution: str, mp3: bool) -> str | None:
-    """Searches a directory for a file containing a specific string in its filename.
-    Returns the filename if found, otherwise returns None.
-    """
     if resolution=="max":
         resolution = ""
     if mp3:
         resolution = "mp3"
 
     if not os.path.exists(directory):
-        #print("Error: Directory does not exist!")
         return None
 
-    # Iterate over each file in the directory
     for root, _, files in os.walk(directory):  # os.walk() traverses all subdirectories
         for filename in files:
             if search_string in filename and resolution in filename:
@@ -380,19 +363,15 @@ def download_video(channel_name: str, video_id: str, counter_id: int, video_tota
                    video_views: int, restricted: bool) -> None:
     restricted_path_snippet = ""
     colored_video_id = video_id
-    # header_width = 95
     header_width = (header_width_global + 11)
     if restricted:
         yt = YouTube(youtube_base_url + video_id, use_oauth=True, allow_oauth_cache=True,
                      on_progress_callback=on_progress)
         restricted_path_snippet = "restricted/"
         colored_video_id = print_colored_text(video_id, BCOLORS.RED)
-        # header_width = 104
         header_width = (header_width_global + 20)
     else:
         yt = YouTube(youtube_base_url + video_id, on_progress_callback=on_progress)
-
-    # print(yt.vid_info)
 
     print("\n")
     print(format_header(colored_video_id + " - " + channel_name
@@ -515,7 +494,6 @@ def merge_video_audio(video_id: str, publish_date: str, video_resolution: str, y
     output_file = (ytchannel_path + str(year) + restricted_path + publish_date + " - " + video_resolution
                    + " - " + clean_string_regex(os.path.splitext(video_file)[0]) + " - " + video_id + ".mp4")
 
-    """Merge video and audio into a single MP4 file using FFmpeg."""
     try:
         print(print_colored_text("\nMerging to MP4...", BCOLORS.BLACK))
         command = [
@@ -539,7 +517,6 @@ def merge_video_audio(video_id: str, publish_date: str, video_resolution: str, y
 def convert_m4a_to_opus_and_merge(video_id: str, publish_date: str, video_resolution: str, year: str,
                                   restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
-    """Convert M4A to Opus format (WebM-compatible)."""
     print(print_colored_text("\nConvert M4A audio to Opus format (WebM compatible)...", BCOLORS.BLACK))
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", audio_file, "-c:a", "libopus", "audio.opus"
@@ -551,7 +528,6 @@ def convert_m4a_to_opus_and_merge(video_id: str, publish_date: str, video_resolu
 def merge_webm_opus(video_id: str, publish_date: str, video_resolution: str, year: str, restricted: bool) -> None:
     video_file, audio_file = find_media_files(".")
     output_file = "tmp/" + video_file
-    """Merge WebM video with Opus audio."""
     print(print_colored_text("Merging WebM video with Opus audio...", BCOLORS.BLACK))
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", video_file, "-i", "audio.opus",
@@ -572,7 +548,6 @@ def merge_webm_opus(video_id: str, publish_date: str, video_resolution: str, yea
 
 def convert_webm_to_mp4(input_file: str, output_file: str, year: str, restricted: bool) -> None:
     create_directories(restricted, year)
-    """Convert a WebM file to MP4 (H.264/AAC)."""
     print(print_colored_text(f"Converting WebM to MP4... (this may take a while)", BCOLORS.BLACK))
     command = [
         "ffmpeg", "-loglevel", "quiet", "-stats", "-i", input_file,
@@ -611,16 +586,14 @@ while True:
 
         show_latest_video_date = False
 
-        # Create an empty list
+        # Create empty lists
         video_list = []
         video_list_restricted = []
 
         clear_screen()
         print(print_colored_text("\nYTDL " + str(version), BCOLORS.YELLOW))
-        print("*" * len(str("YTDL " + str(version))))
-        print("YouTube Downloader (Exit with Ctrl + C)")
-        #print("Exit App with Ctrl + C")
-        #print(print_colored_text("https://github.com/SteveAustin79/YTDL\n", BCOLORS.BLACK))
+        print(print_colored_text("*" * len(str("YTDL " + str(version))), BCOLORS.YELLOW))
+        print(print_colored_text("YouTube Channel Downloader (Exit with Ctrl + C)", BCOLORS.BLACK))
         print("")
         delete_temp_files()
         print_configuration()
@@ -629,9 +602,9 @@ while True:
         if lines and len(lines) > 1:
             YTchannel = user_selection(lines, show_latest_video_date)
         else:
-            YTchannel = input("\nYouTube Channel or Video URL:  ")
+            YTchannel = input("\nYouTube Channel, Video-, or Playlist URL:  ")
         if "- Enter YouTube Channel or Video URL -" in YTchannel:
-            YTchannel = input("\nYouTube Channel or Video URL:  ")
+            YTchannel = input("\nYouTube Channel, Video-, or Playlist URL:  ")
 
         video_id_from_single_video = ""
         if youtube_base_url in YTchannel:
@@ -642,6 +615,12 @@ while True:
             ytv = YouTube(youtube_base_url + YTchannel, on_progress_callback=on_progress)
             YTchannel = ytv.channel_url
             video_id_from_single_video = ytv.video_id
+        elif "list=" in YTchannel:
+            playlist = Playlist(YTchannel)
+            YTchannel = playlist.owner_url
+            for p_video in playlist.videos:
+                video_id_from_single_video += p_video.video_id + ","
+            video_id_from_single_video = video_id_from_single_video[:-1]
 
         c = Channel(YTchannel)
         print("\n" + print_colored_text(print_colored_text(str(c.channel_name), BCOLORS.BOLD), BCOLORS.CYAN))
@@ -694,13 +673,13 @@ while True:
                     except ValueError:
                         print("Invalid input, please enter numbers separated by commas.")
 
-        ytchannel_path = smart_input("\nDownload Path:  ",
+        ytchannel_path = smart_input("\nDownload Path:" + " " * (first_column_width - len("Download Path:")),
                                      output_dir + "/" + clean_string_regex(c.channel_name).rstrip())
         default_max_res = "max"
         default_ignore_min_duration = "y"
         default_ignore_max_duration = "y"
         default_skip_restricted = "n"
-        default_minimum_views = "0"
+        default_minimum_views = 0
         default_year_subfolders = "n"
         default_exclude_videos = ""
         default_include_videos = ""
@@ -767,7 +746,7 @@ while True:
                 cc_check_and_update_channel_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
             else:
                 print(print_colored_text("\nChannel config file found! ", BCOLORS.BLUE) +
-                      print_colored_text("(" + ytchannel_path + channel_config_path + ")", BCOLORS.BLACK))
+                      print_colored_text("\n" + ytchannel_path + channel_config_path, BCOLORS.BLACK))
 
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
