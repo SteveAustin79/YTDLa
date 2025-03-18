@@ -65,7 +65,7 @@ def cc_save_config(cc_file_path: str, cc_config: str) -> None:
     with open(cc_file_path, "w", encoding="utf-8") as cc_file:
         json.dump(cc_config, cc_file, indent=4, ensure_ascii=False)
 
-def cc_check_and_update_channel_config(cc_file_path: str, cc_required_config: dict) -> None:
+def cc_check_and_update_json_config(cc_file_path: str, cc_required_config: dict) -> None:
     """Ensures all required keys exist in the config file, adding missing ones."""
     cc_config = cc_load_config(cc_file_path)  # Load existing or empty config
 
@@ -150,10 +150,8 @@ def format_header(counter: str, width: int) -> str:
                    "*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + print_colored_text(f" {counter_split[1]} ", BCOLORS.CYAN)
                    + "| " + counter_split[2] + " (" + get_free_space(output_dir) + " free) ")
     total_length = width - 2  # Exclude parentheses ()
-
     # Center the counter with asterisks
     formatted = f"{counter_str.ljust(total_length, '*')}"
-
     return formatted
 
 
@@ -578,7 +576,7 @@ while True:
             default_audio_mp3 = config["default_audioMP3"]
         except Exception as e:
             print("An error occurred, incomplete config file:", str(e))
-            cc_check_and_update_channel_config("config.json", REQUIRED_APP_CONFIG)
+            cc_check_and_update_json_config("config.json", REQUIRED_APP_CONFIG)
             continue
 
         if not os.path.exists(output_dir):
@@ -625,7 +623,6 @@ while True:
         c = Channel(YTchannel)
         print("\n" + print_colored_text(print_colored_text(str(c.channel_name), BCOLORS.BOLD), BCOLORS.CYAN))
         print(print_colored_text(print_colored_text("*" * len(str(c.channel_name)), BCOLORS.BOLD), BCOLORS.CYAN))
-
         print(print_colored_text(c.channel_url, BCOLORS.CYAN))
 
         selected_video_ids = []
@@ -637,13 +634,10 @@ while True:
 
             list_all_videos = smart_input("\nList all " + str(len(c.video_urls)) + " Videos?" + more_than + " (Restricted videos in "
                                           + print_colored_text("red", BCOLORS.RED) + ")  Y/n", "y")
-
             if list_all_videos == "y":
                 print("")
-
                 # Display the video list with numbers
                 video_list = list(c.videos)  # Convert to a list if not already
-
                 for index, v_video in enumerate(video_list, start=1):
                     video_date_formated = print_colored_text(str(v_video.publish_date.strftime("%Y-%m-%d")), BCOLORS.BLACK)
                     video_message = f"{index}. {clean_string_regex(v_video.title)}"
@@ -659,7 +653,6 @@ while True:
                         if choices is None:
                             break
                         selected_indices = [int(x.strip()) for x in choices.split(",")]
-
                         # Validate selection
                         if all(1 <= index <= len(video_list) for index in selected_indices):
                             selected_videos = [video_list[i - 1] for i in selected_indices]  # Get the chosen videos
@@ -743,7 +736,7 @@ while True:
                 print(print_colored_text("\nIncomplete ", BCOLORS.ORANGE)
                       + print_colored_text("channel config file! --> Adding missing key(s) to file ", BCOLORS.BLUE)
                       + print_colored_text(str(incomplete_string), BCOLORS.ORANGE))
-                cc_check_and_update_channel_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
+                cc_check_and_update_json_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
             else:
                 print(print_colored_text("\nChannel config file found! ", BCOLORS.BLUE) +
                       print_colored_text("\n" + ytchannel_path + channel_config_path, BCOLORS.BLACK))
@@ -751,10 +744,10 @@ while True:
         if video_id_from_single_video != "":
             default_include_videos = video_id_from_single_video
 
+        default_value_mp3 = "v"
         if default_audio_mp3:
             default_value_mp3 = "a"
-        else:
-            default_value_mp3 = "v"
+
         audio_or_video = smart_input("\nAudio or Video?  a/v", default_value_mp3)
         audio_or_video_bool = True
         if audio_or_video == "v":
@@ -890,7 +883,6 @@ while True:
         else:
             print(print_colored_text(f"\nDONE! Downloaded in this session: {count_this_run}", BCOLORS.GREEN))
             print(f"\n{get_free_space(ytchannel_path)} free\n")
-
         continue_ytdl = smart_input("Continue?  Y/n ", "y")
         print("\n")
         if continue_ytdl == "y":
