@@ -8,7 +8,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.cli import on_progress
 
-version = "0.5 (20250318)"
+version = "0.5 (20250320)"
 header_width_global = 97
 first_column_width = 17
 first_column_width_wide = 37
@@ -251,20 +251,30 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
             if not line == u_lines[(len(u_lines) - 1)]:
                 spaces = (header_width_global -34)
                 ytchannel = Channel(line)
-                latest_video = list(ytchannel.videos)
-                for i in range(len(latest_video)):
-                    if (latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
-                            latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE'):
-                        latest_date = latest_video[i].publish_date.strftime("%Y-%m-%d")
-                        got_it = find_file_by_string(
-                            output_dir + "/" + clean_string_regex(ytchannel.channel_name).rstrip(), latest_date, "", False)
-                        if got_it:
-                            latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
-                        else:
-                            latest_date = print_colored_text(latest_date, BCOLORS.RED)
-                        latest_date_formated = (" " + print_colored_text("." * ((spaces - len(str(u_index)) - len(line)) - 2), BCOLORS.BLACK)
-                                                + " Latest: " + latest_date + " | " + latest_video[i].video_id)
-                        break
+                try:
+                    latest_video = list(ytchannel.videos)
+                    for i in range(len(latest_video)):
+                        if (latest_video[i].vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
+                                latest_video[i].vid_info.get('playabilityStatus', {}).get(
+                                    'status') != 'LIVE_STREAM_OFFLINE'):
+                            latest_date = latest_video[i].publish_date.strftime("%Y-%m-%d")
+                            got_it = find_file_by_string(
+                                output_dir + "/" + clean_string_regex(ytchannel.channel_name).rstrip(), latest_date, "",
+                                False)
+                            if got_it:
+                                latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
+                            else:
+                                latest_date = print_colored_text(latest_date, BCOLORS.RED)
+                            latest_date_formated = (
+                                        " " + print_colored_text("." * ((spaces - len(str(u_index)) - len(line)) - 2),
+                                                                 BCOLORS.BLACK)
+                                        + " Latest: " + latest_date + print_colored_text(" | ", BCOLORS.BLACK) +
+                                        latest_video[i].video_id)
+                            break
+                except Exception as eee:
+                    latest_date_formated = (" " +
+                                            print_colored_text("." * ((spaces - len(str(u_index)) - len(line)) - 2), BCOLORS.BLACK)
+                                            + " " + print_colored_text(str(eee), BCOLORS.RED))
 
         print(f"{u_index}. {line}{latest_date_formated}")
         latest_date_formated = ""
