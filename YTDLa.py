@@ -146,9 +146,9 @@ def print_configuration_line(config_desc_text: str, config_value: str, config_va
 
 def format_header(counter: str, width: int) -> str:
     counter_split = counter.split(" - ")
-    counter_str = ("*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + " " + counter_split[0] + " " +
-                   "*" * int((first_column_width - (len(counter_split[0]) + 2)) / 2) + print_colored_text(f" {counter_split[1]} ", BCOLORS.CYAN)
-                   + "| " + counter_split[2] + " (" + get_free_space(output_dir) + " free) ")
+    counter_str = ("*" * 2 + " " + counter_split[0] + " " + "*" * 2 +
+                   print_colored_text(f" {counter_split[1]} ", BCOLORS.CYAN) +
+                   "| " + counter_split[2] + " (" + get_free_space(output_dir) + " free) ")
     total_length = width - 2  # Exclude parentheses ()
     # Center the counter with asterisks
     formatted = f"{counter_str.ljust(total_length, '*')}"
@@ -180,7 +180,8 @@ def print_video_infos(yt: YouTube, res: str, video_views: int) -> None:
 
     if not audio_or_video_bool:
         print(print_colored_text("Resolution:" + " " * (first_column_width - len("Resolution:")), BCOLORS.BLACK),
-            print_colored_text(res, BCOLORS.YELLOW), print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
+              print_colored_text(res, BCOLORS.YELLOW),
+              print_colored_text("  (" + limit_resolution_to + ")", BCOLORS.BLACK))
         print(" " * first_column_width, print_colored_text(str(print_resolutions(yt)), BCOLORS.BLACK))
 
 
@@ -191,13 +192,11 @@ def format_time(seconds: int) -> str:
 
 def get_free_space(path: str) -> str:
     total, used, free = shutil.disk_usage(path)  # Get disk space (in bytes)
-
     # Convert bytes to GB or MB for readability
     if free >= 1_000_000_000:  # If space is at least 1GB
         formatted_space = f"{free / 1_073_741_824:.1f} GB"
     else:
         formatted_space = f"{free / 1_048_576:.0f} MB"  # Otherwise, use MB
-
     return formatted_space
 
 
@@ -224,7 +223,6 @@ def rename_files_in_temp_directory() -> None:
             sanitized_name = filename.replace(":", "")
             old_path = os.path.join(directory, filename)
             new_path = os.path.join(directory, sanitized_name)
-
             os.rename(old_path, new_path)
 
 
@@ -251,7 +249,7 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
     for u_index, line in enumerate(u_lines, start=1):
         if u_show_latest_video_date:
             if not line == u_lines[(len(u_lines) - 1)]:
-                spaces = (header_width_global -32)
+                spaces = (header_width_global -34)
                 ytchannel = Channel(line)
                 latest_video = list(ytchannel.videos)
                 for i in range(len(latest_video)):
@@ -264,8 +262,8 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
                             latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
                         else:
                             latest_date = print_colored_text(latest_date, BCOLORS.RED)
-                        latest_date_formated = (" " * (spaces-len(str(u_index))-len(line)) + "Last: "
-                                                + latest_date + " | " + latest_video[i].video_id)
+                        latest_date_formated = (" " + print_colored_text("." * ((spaces - len(str(u_index)) - len(line)) - 2), BCOLORS.BLACK)
+                                                + " Latest: " + latest_date + " | " + latest_video[i].video_id)
                         break
 
         print(f"{u_index}. {line}{latest_date_formated}")
@@ -406,8 +404,7 @@ def download_video(channel_name: str, video_id: str, counter_id: int, video_tota
             more_than1080p = True
             video_file_tmp, audio_file_tmp = find_media_files("tmp")
             if video_file_tmp is not None:
-                path = (ytchannel_path + str(year) + "/" + restricted_path_snippet + str(
-                    publishing_date) + " - " + res + " - "
+                path = (ytchannel_path + str(year) + "/" + restricted_path_snippet + str(publishing_date) + " - " + res + " - "
                         + clean_string_regex(os.path.splitext(video_file_tmp)[0]) + " - " + video_id + ".mp4")
                 print(print_colored_text("\nMerged file still available!", BCOLORS.BLACK))
                 convert_webm_to_mp4("tmp/" + video_file_tmp, path, year, restricted)
@@ -604,6 +601,9 @@ while True:
         if "- Enter YouTube Channel or Video URL -" in YTchannel:
             YTchannel = input("\nYouTube Channel, Video-, or Playlist URL:  ")
 
+        print("")
+        print_asteriks_line()
+
         video_id_from_single_video = ""
         if youtube_base_url in YTchannel:
             ytv = YouTube(YTchannel, on_progress_callback=on_progress)
@@ -728,9 +728,26 @@ while True:
                 incomplete_config = True
                 incomplete_string.append("c_year_subfolders")
 
-            default_exclude_videos = channel_config["c_exclude_video_ids"]
-            default_include_videos = channel_config["c_include_video_ids"]
-            default_filter_words = channel_config["c_filter_words"]
+            if "c_exclude_video_ids" in channel_config:
+                if channel_config["c_exclude_video_ids"] != "":
+                    default_exclude_videos = channel_config["c_exclude_video_ids"]
+            else:
+                incomplete_config = True
+                incomplete_string.append("c_exclude_video_ids")
+
+            if "c_include_video_ids" in channel_config:
+                if channel_config["c_include_video_ids"] != "":
+                    default_include_videos = channel_config["c_include_video_ids"]
+            else:
+                incomplete_config = True
+                incomplete_string.append("c_include_video_ids")
+
+            if "c_filter_words" in channel_config:
+                if channel_config["c_filter_words"] != "":
+                    default_filter_words = channel_config["c_filter_words"]
+            else:
+                incomplete_config = True
+                incomplete_string.append("c_filter_words")
 
             if incomplete_config:
                 print(print_colored_text("\nIncomplete ", BCOLORS.ORANGE)
@@ -777,10 +794,9 @@ while True:
             print(print_colored_text("Skipping restricted Video(s)!", BCOLORS.RED))
 
         min_video_views = int(smart_input("Minimum Views (0=disabled): ", default_minimum_views))
+        min_video_views_bool = False
         if min_video_views > 0:
             min_video_views_bool = True
-        else:
-            min_video_views_bool = False
 
         year_subfolders = False
         year_subfolders_temp = smart_input("Year sub folder structure?  Y/n", default_year_subfolders)
