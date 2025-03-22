@@ -8,7 +8,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.cli import on_progress
 
-version = "0.5 (20250320)"
+version = "0.5 (20250322)"
 header_width_global = 97
 first_column_width = 17
 first_column_width_wide = 37
