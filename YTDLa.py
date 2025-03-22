@@ -229,7 +229,7 @@ def rename_files_in_temp_directory() -> None:
 def read_channel_txt_lines(filename: str) -> list[str]:
     try:
         with open(filename, "r", encoding="utf-8") as file:
-            rc_lines = [line.strip() for line in file.readlines()]  # Remove newlines
+            rc_lines = [line.strip() for line in file if not line.lstrip().startswith("#")]  # Ignore commented lines
         rc_lines.append("--- Enter YouTube Channel or Video URL ---")
         return rc_lines
     except FileNotFoundError:
@@ -261,9 +261,7 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
                             got_it = find_file_by_string(
                                 output_dir + "/" + clean_string_regex(ytchannel.channel_name).rstrip(), latest_date, "",
                                 False)
-                            if got_it:
-                                latest_date = print_colored_text(latest_date, BCOLORS.GREEN)
-                            else:
+                            if not got_it:
                                 latest_date = print_colored_text(latest_date, BCOLORS.RED)
                             latest_date_formated = (
                                         " " + print_colored_text("." * ((spaces - len(str(u_index)) - len(line)) - 2),
@@ -383,7 +381,12 @@ def download_video(channel_name: str, video_id: str, counter_id: int, video_tota
     print(format_header(colored_video_id + " - " + channel_name
                          + " - " + str(counter_id) + "/" + str(video_total_count), header_width))
 
-    publishing_date = yt.publish_date.strftime("%Y-%m-%d")
+    try:
+        publishing_date = yt.publish_date.strftime("%Y-%m-%d")
+    except Exception as eee:
+        publishing_date = eee
+
+    # print(yt.vid_info.get('playabilityStatus'))
 
     if year_subfolders:
         year = "/" + str(yt.publish_date.strftime("%Y"))
@@ -882,7 +885,7 @@ while True:
                         if video.views < min_video_views:
                             do_not_download = 1
 
-                    if (video.age_restricted == False and
+                    if (not video.age_restricted and
                             video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
                             video.vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE' and
                             do_not_download == 0):
@@ -894,7 +897,7 @@ while True:
                                        count_ok_videos, len(video_watch_urls), video.views, False)
                     else:
                         if not skip_restricted_bool:
-                            if (video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
+                            if (video.age_restricted and video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
                                     video.vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE' and
                                     do_not_download == 0):
                                 count_restricted_videos += 1
