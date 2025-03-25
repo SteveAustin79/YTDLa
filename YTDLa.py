@@ -7,11 +7,13 @@ import sys
 import pytubefix.extract
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.cli import on_progress
+from datetime import datetime
 
 version = "0.5 (20250322)"
 header_width_global = 97
 first_column_width = 17
 first_column_width_wide = 37
+date_time_format = "%d.%m.%Y %H:%M:%S"
 
 class BCOLORS:
     WHITE      = "\033[97m"
@@ -96,7 +98,10 @@ def load_config(c_file: str):
 
 
 def print_asteriks_line() -> None:
-    print("*" * header_width_global)
+    now = datetime.now()
+    free_space = print_colored_text(" " + get_free_space(output_dir) + " free | "
+                                    + now.strftime(date_time_format) + " ", BCOLORS.BLACK)
+    print(f"{free_space.center(header_width_global + 9, '*')}")
 
 
 def print_colored_text(message_text: str, color: str) -> str:
@@ -279,6 +284,7 @@ def user_selection(u_lines, u_show_latest_video_date: bool):
 
     while True:
         try:
+            print_asteriks_line()
             choice = int(input("\nEnter the number of your choice: "))
             if 1 <= choice <= len(u_lines):
                 return u_lines[choice - 1]  # Return selected line
