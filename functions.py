@@ -26,7 +26,7 @@ class AppConfig:
         "min_duration_in_minutes": 0,
         "max_duration_in_minutes": 0,
         "video_listing": "",
-        "default_audioMP3": true,
+        "default_audioMP3": "",
         "web_client": ""
     }
 
