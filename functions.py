@@ -23,10 +23,10 @@ class AppConfig:
         "output_directory": "",
         "youtube_url": "https://www.youtube.com/",
         "youtube_watch_url": "https://www.youtube.com/watch?v=",
-        "youtube_base_url": "https://www.youtube.com/watch?v=",
         "min_duration_in_minutes": 0,
         "max_duration_in_minutes": 0,
         "video_listing": "",
+        "default_audioMP3": true,
         "web_client": ""
     }
 
