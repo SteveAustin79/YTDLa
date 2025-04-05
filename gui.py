@@ -37,13 +37,13 @@ elements_to_destroy_loop = []
 
 def update_channel_config(default_max_res, limit_resolution_to, default_min_duration_in_minutes, min_duration,
                            default_max_duration_in_minutes, max_duration, default_minimum_year, min_year,
-                           default_maximum_year, max_year, default_only_restricted, only_restricted_videos,
+                           default_maximum_year, max_year, default_only_restricted,
                            default_skip_restricted, skip_restricted, default_minimum_views, min_video_views,
                            default_year_subfolders, year_subfolders_temp, default_exclude_videos, exclude_video_ids,
                            default_include_videos, include_video_ids, default_filter_words, video_name_filter) -> None:
     if (default_max_res != limit_resolution_to or default_min_duration_in_minutes != min_duration or
             default_max_duration_in_minutes != max_duration or default_minimum_year != min_year or
-            default_maximum_year != max_year or default_only_restricted != only_restricted_videos or
+            default_maximum_year != max_year  or
             default_skip_restricted != skip_restricted or default_minimum_views != min_video_views or
             default_year_subfolders != year_subfolders_temp or default_exclude_videos != exclude_video_ids or
             default_include_videos != include_video_ids or default_filter_words != video_name_filter):
@@ -63,9 +63,9 @@ def update_channel_config(default_max_res, limit_resolution_to, default_min_dura
             JSONConfig.update_json_config(ytchannel_path.get() + AppConfig.channel_config_path, "c_minimum_year", int(min_year))
         if default_maximum_year != max_year:
             JSONConfig.update_json_config(ytchannel_path.get() + AppConfig.channel_config_path, "c_maximum_year", int(max_year))
-        if default_only_restricted != only_restricted_videos:
-            JSONConfig.update_json_config(ytchannel_path.get() + AppConfig.channel_config_path, "c_only_restricted",
-                               only_restricted_videos)
+        # if default_only_restricted != only_restricted_videos:
+        #     JSONConfig.update_json_config(ytchannel_path.get() + AppConfig.channel_config_path, "c_only_restricted",
+        #                        only_restricted_videos)
         if default_skip_restricted != skip_restricted:
             JSONConfig.update_json_config(ytchannel_path.get() + AppConfig.channel_config_path, "c_skip_restricted", skip_restricted)
         if default_minimum_views != min_video_views:
@@ -83,14 +83,14 @@ def update_channel_config(default_max_res, limit_resolution_to, default_min_dura
 
 def create_channel_config(default_max_res, limit_resolution_to, default_min_duration_in_minutes, min_duration,
                               default_max_duration_in_minutes, max_duration, default_minimum_year, min_year,
-                              default_maximum_year, max_year, default_only_restricted, only_restricted_videos,
+                              default_maximum_year, max_year,
                               default_skip_restricted, skip_restricted, default_minimum_views, min_video_views,
                               default_year_subfolders, year_subfolders_temp, default_exclude_videos, exclude_video_ids,
                               default_include_videos, include_video_ids, default_filter_words,
                               video_name_filter) -> None:
     if (default_max_res != limit_resolution_to or default_min_duration_in_minutes != min_duration or
             default_max_duration_in_minutes != max_duration or default_minimum_year != min_year or
-            default_maximum_year != max_year or default_only_restricted != only_restricted_videos or
+            default_maximum_year != max_year or
             default_skip_restricted != skip_restricted or default_minimum_views != min_video_views or
             default_year_subfolders != year_subfolders_temp or default_exclude_videos != exclude_video_ids or
             default_include_videos != include_video_ids or default_filter_words != video_name_filter):
@@ -109,9 +109,9 @@ def create_channel_config(default_max_res, limit_resolution_to, default_min_dura
         json_max_year = 0
         if default_maximum_year != max_year:
             json_max_year = max_year
-        json_only_restricted_videos = ""
-        if default_only_restricted != only_restricted_videos:
-            json_only_restricted_videos = only_restricted_videos
+        # json_only_restricted_videos = ""
+        # if default_only_restricted != only_restricted_videos:
+        #     json_only_restricted_videos = only_restricted_videos
         json_skip_restricted = ""
         if default_skip_restricted != skip_restricted:
             json_skip_restricted = skip_restricted
@@ -136,7 +136,7 @@ def create_channel_config(default_max_res, limit_resolution_to, default_min_dura
             "c_max_duration_in_minutes": int(json_max_duration_in_minutes),
             "c_minimum_year": int(json_min_year),
             "c_maximum_year": int(json_max_year),
-            "c_only_restricted": json_only_restricted_videos,
+            # "c_only_restricted": json_only_restricted_videos,
             "c_skip_restricted": json_skip_restricted,
             "c_minimum_views": int(json_min_video_views),
             "c_year_subfolders": json_year_subfolders_temp,
@@ -515,7 +515,7 @@ def get_information_work():
     default_max_duration_in_minutes = 0
     default_minimum_year = 0
     default_maximum_year = 0
-    default_only_restricted = ""
+    # default_only_restricted = ""
     default_skip_restricted = ""
     default_minimum_views = 0
     default_year_subfolders = ""
@@ -572,14 +572,14 @@ def get_information_work():
             incomplete_config = True
             incomplete_string.append("c_maximum_year")
 
-        if "c_only_restricted" in channel_config:
-            if channel_config["c_only_restricted"] != "":
-                default_only_restricted = channel_config["c_only_restricted"]
-                if default_only_restricted == "y":
-                    only_restricted = True
-        else:
-            incomplete_config = True
-            incomplete_string.append("c_only_restricted")
+        # if "c_only_restricted" in channel_config:
+        #     if channel_config["c_only_restricted"] != "":
+        #         default_only_restricted = channel_config["c_only_restricted"]
+        #         if default_only_restricted == "y":
+        #             only_restricted = True
+        # else:
+        #     incomplete_config = True
+        #     incomplete_string.append("c_only_restricted")
 
         if "c_skip_restricted" in channel_config:
             if channel_config["c_skip_restricted"] != "":
@@ -641,7 +641,6 @@ def get_information_work():
                                               default_max_duration_in_minutes, configuration_max_duration.get(),
                                               default_minimum_year, configuration_min_year.get(),
                                               default_maximum_year, configuration_max_year.get(),
-                                              default_only_restricted,
                                               "y" if configuration_only_restricted.get() == 1 else "",
                                               default_skip_restricted,
                                               "y" if configuration_skip_restricted.get() == 1 else "",
@@ -659,7 +658,6 @@ def get_information_work():
                                         default_max_duration_in_minutes, configuration_max_duration.get(),
                                         default_minimum_year, configuration_min_year.get(),
                                         default_maximum_year, configuration_max_year.get(),
-                                        default_only_restricted, "y" if configuration_only_restricted.get() == 1 else "",
                                         default_skip_restricted, "y" if configuration_skip_restricted.get() == 1 else "",
                                         default_minimum_views, configuration_min_views.get(),
                                         default_year_subfolders, "y" if configuration_year_subs.get() == 1 else "",
@@ -729,16 +727,16 @@ def get_information_work():
     configuration_skip_restricted.grid(row=8, column=3, padx=padding_x, pady=padding_y, sticky="w")
     elements_to_destroy.append(configuration_skip_restricted)
 
-    configuration_only_restricted_label = customtkinter.CTkLabel(app, text="Only restricted:")
-    configuration_only_restricted_label.grid(row=9, column=2, padx=padding_x, pady=padding_y, sticky="e")
-    elements_to_destroy.append(configuration_only_restricted_label)
-    configuration_only_restricted.configure(text="")
-    if only_restricted:
-        configuration_only_restricted.select()
-    else:
-        configuration_only_restricted.deselect()
-    configuration_only_restricted.grid(row=9, column=3, padx=padding_x, pady=padding_y, sticky="w")
-    elements_to_destroy.append(configuration_only_restricted)
+    # configuration_only_restricted_label = customtkinter.CTkLabel(app, text="Only restricted:")
+    # configuration_only_restricted_label.grid(row=9, column=2, padx=padding_x, pady=padding_y, sticky="e")
+    # elements_to_destroy.append(configuration_only_restricted_label)
+    # configuration_only_restricted.configure(text="")
+    # if only_restricted:
+    #     configuration_only_restricted.select()
+    # else:
+    #     configuration_only_restricted.deselect()
+    # configuration_only_restricted.grid(row=9, column=3, padx=padding_x, pady=padding_y, sticky="w")
+    # elements_to_destroy.append(configuration_only_restricted)
 
     # min year
     configuration_min_year_label = customtkinter.CTkLabel(app, text="Min. year:")
@@ -803,9 +801,9 @@ def get_information_work():
     if default_include_videos != "":
         include_list = clean_youtube_urls(string_to_list(default_include_videos))
 
-    only_restricted_videos_bool = False
-    if configuration_only_restricted.get() == 1:
-        only_restricted_videos_bool = True
+    # only_restricted_videos_bool = False
+    # if configuration_only_restricted.get() == 1:
+    #     only_restricted_videos_bool = True
 
     skip_restricted_bool = False
     if configuration_skip_restricted.get() == 1:
@@ -887,7 +885,7 @@ def get_information_work():
     if looper:
         audio_button.configure(command=lambda: loop_download(True, configuration_resolution.get(),
                                                                 configuration_filter_words.get("0.0", "end"),
-                                                                only_restricted_videos_bool, skip_restricted_bool,
+                                                                skip_restricted_bool,
                                                                 True if configuration_year_subs.get() == 1 else False,
                                                                 min_duration_bool, configuration_min_duration.get(),
                                                                 max_duration_bool, configuration_max_duration.get(),
@@ -895,7 +893,7 @@ def get_information_work():
                                                                 configuration_min_views.get()))
         video_button.configure(command=lambda: loop_download(False, configuration_resolution.get(),
                                                                 configuration_filter_words.get("0.0", "end"),
-                                                                only_restricted_videos_bool, skip_restricted_bool,
+                                                                skip_restricted_bool,
                                                                 True if configuration_year_subs.get() == 1 else False,
                                                                 min_duration_bool, configuration_min_duration.get(),
                                                                 max_duration_bool, configuration_max_duration.get(),
@@ -943,18 +941,18 @@ def limit_resolution(resolution: str, limit: str) -> str:
     return max_resolution
 
 
-def loop_download(audio_or_video_bool, default_max_res, default_filter_words, only_restricted_videos_bool,
-                        skip_restricted_bool, year_subfolders, min_duration_bool, min_duration, max_duration_bool, max_duration,
+def loop_download(audio_or_video_bool, default_max_res, default_filter_words,
+                  skip_restricted_bool, year_subfolders, min_duration_bool, min_duration, max_duration_bool, max_duration,
                         min_year, max_year, min_video_views):
     disable_buttons()
-    t_loop_download = threading.Thread(target=lambda: loop_download_work(audio_or_video_bool, default_max_res, default_filter_words, only_restricted_videos_bool,
+    t_loop_download = threading.Thread(target=lambda: loop_download_work(audio_or_video_bool, default_max_res, default_filter_words,
                         skip_restricted_bool, year_subfolders, min_duration_bool, min_duration, max_duration_bool, max_duration,
                         min_year, max_year, min_video_views), daemon=True)
     t_loop_download.start()
     # t_loop_download.join()
 
 
-def loop_download_work(audio_or_video_bool, default_max_res, default_filter_words, only_restricted_videos_bool,
+def loop_download_work(audio_or_video_bool, default_max_res, default_filter_words,
                         skip_restricted_bool, year_subfolders, min_duration_bool, min_duration, max_duration_bool, max_duration,
                         min_year, max_year, min_video_views):
     count_restricted_videos = 0
@@ -998,7 +996,7 @@ def loop_download_work(audio_or_video_bool, default_max_res, default_filter_word
                 if (not video.age_restricted and
                         video.vid_info.get('playabilityStatus', {}).get('status') != 'UNPLAYABLE' and
                         video.vid_info.get('playabilityStatus', {}).get('status') != 'LIVE_STREAM_OFFLINE' and
-                        do_not_download == 0 and not only_restricted_videos_bool):
+                        do_not_download == 0):
                     count_ok_videos += 1
                     count_this_run += 1
                     count_skipped = 0
@@ -1456,7 +1454,7 @@ configuration_min_duration = customtkinter.CTkEntry(app)
 configuration_min_views = customtkinter.CTkEntry(app)
 configuration_year_subs = customtkinter.CTkCheckBox(app)
 configuration_max_duration = customtkinter.CTkEntry(app)
-configuration_skip_restricted = customtkinter.CTkCheckBox(app)
+# configuration_skip_restricted = customtkinter.CTkCheckBox(app)
 configuration_only_restricted = customtkinter.CTkCheckBox(app)
 configuration_min_year = customtkinter.CTkEntry(app)
 configuration_max_year = customtkinter.CTkEntry(app)
