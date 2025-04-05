@@ -37,7 +37,7 @@ elements_to_destroy_loop = []
 
 def update_channel_config(default_max_res, limit_resolution_to, default_min_duration_in_minutes, min_duration,
                            default_max_duration_in_minutes, max_duration, default_minimum_year, min_year,
-                           default_maximum_year, max_year, default_only_restricted,
+                           default_maximum_year, max_year,
                            default_skip_restricted, skip_restricted, default_minimum_views, min_video_views,
                            default_year_subfolders, year_subfolders_temp, default_exclude_videos, exclude_video_ids,
                            default_include_videos, include_video_ids, default_filter_words, video_name_filter) -> None:
@@ -641,7 +641,6 @@ def get_information_work():
                                               default_max_duration_in_minutes, configuration_max_duration.get(),
                                               default_minimum_year, configuration_min_year.get(),
                                               default_maximum_year, configuration_max_year.get(),
-                                              "y" if configuration_only_restricted.get() == 1 else "",
                                               default_skip_restricted,
                                               "y" if configuration_skip_restricted.get() == 1 else "",
                                               default_minimum_views, configuration_min_views.get(),
@@ -1454,8 +1453,8 @@ configuration_min_duration = customtkinter.CTkEntry(app)
 configuration_min_views = customtkinter.CTkEntry(app)
 configuration_year_subs = customtkinter.CTkCheckBox(app)
 configuration_max_duration = customtkinter.CTkEntry(app)
-# configuration_skip_restricted = customtkinter.CTkCheckBox(app)
-configuration_only_restricted = customtkinter.CTkCheckBox(app)
+configuration_skip_restricted = customtkinter.CTkCheckBox(app)
+# configuration_only_restricted = customtkinter.CTkCheckBox(app)
 configuration_min_year = customtkinter.CTkEntry(app)
 configuration_max_year = customtkinter.CTkEntry(app)
 configuration_filter_words = customtkinter.CTkTextbox(app)
