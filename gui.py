@@ -16,7 +16,7 @@ from functions import (AppConfig, COLORS, CcConfig, JSONConfig, load_config, fin
 
 # dropdown with int for loop mode exit after int loops
 
-app_title = "YTDL.video"
+app_title = "YTDL.gui"
 entry_width = 450
 padding_x = 6
 padding_y = 3
