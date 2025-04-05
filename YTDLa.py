@@ -8,6 +8,7 @@ import pytubefix.extract
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.cli import on_progress
 from datetime import datetime
+from functions import AppConfig
 
 version = "0.5 (20250322)"
 header_width_global = 97
@@ -28,27 +29,6 @@ class BCOLORS:
     UNDERLINE  = "\033[4m"
     BOLD       = "\033[1m"
     ENDC       = "\033[0m"
-
-REQUIRED_APP_CONFIG = {
-    "output_directory": "",
-    "youtube_base_url": "",
-    "min_duration_in_minutes": "",
-    "max_duration_in_minutes": "",
-    "video_listing": "",
-    "default_audioMP3": ""
-}
-
-REQUIRED_VIDEO_CHANNEL_CONFIG = {
-    "c_max_resolution": "",
-    "c_ignore_min_duration": "",
-    "c_ignore_max_duration": "",
-    "c_skip_restricted": "",
-    "c_minimum_views": "",
-    "c_year_subfolders": "",
-    "c_exclude_video_ids": "",
-    "c_include_video_ids": "",
-    "c_filter_words": ""
-}
 
 
 def cc_load_config(file_path: str):
@@ -592,7 +572,7 @@ while True:
             default_audio_mp3 = config["default_audioMP3"]
         except Exception as e:
             print("An error occurred, incomplete config file:", str(e))
-            cc_check_and_update_json_config("config.json", REQUIRED_APP_CONFIG)
+            cc_check_and_update_json_config("config.json", AppConfig.REQUIRED_APP_CONFIG)
             continue
 
         if not os.path.exists(output_dir):
@@ -772,7 +752,7 @@ while True:
                 print(print_colored_text("\nIncomplete ", BCOLORS.ORANGE)
                       + print_colored_text("channel config file! --> Adding missing key(s) to file ", BCOLORS.BLUE)
                       + print_colored_text(str(incomplete_string), BCOLORS.ORANGE))
-                cc_check_and_update_json_config(ytchannel_path + channel_config_path, REQUIRED_VIDEO_CHANNEL_CONFIG)
+                cc_check_and_update_json_config(ytchannel_path + channel_config_path, AppConfig.REQUIRED_VIDEO_CHANNEL_CONFIG)
             else:
                 print(print_colored_text("\nChannel config file found! ", BCOLORS.BLUE) +
                       print_colored_text("\n" + ytchannel_path + channel_config_path, BCOLORS.BLACK))
