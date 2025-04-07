@@ -11,6 +11,7 @@ from io import BytesIO
 class AppConfig:
     version = " v1.0 (20250406)"
     logo_path = "assets/logo.png"
+    icon_path = "assets/icon.ico"
     channel_config_path = "/" + "_config_channel.json"
     date_format_display = "%d.%m.%Y"
     date_time_format = "%d.%m.%Y %H:%M:%S"
@@ -65,6 +66,7 @@ class COLORS:
     violet      = "#c7a8ff"
     log_bg      = "#171717"
     separator   = "#444444"
+    frame_bg    = "#131313"
 
 
 class Tooltip:
@@ -247,6 +249,11 @@ def clean_string_regex(text: str) -> str:
     new_text = text.replace(":", "")
     pattern = r"[^a-zA-Z0-9 ]"
     return re.sub(pattern, "", new_text)
+
+
+def format_time(seconds: int) -> str:
+    f_min, f_sec = divmod(seconds, 60)
+    return f"{f_min}m{f_sec}s"
 
 
 def string_to_list(input_string: str) -> list[str]:
